@@ -1,0 +1,31 @@
+#!/bin/bash
+
+NOME="$1"
+DOMINIO="$2"
+EMAIL="$3"
+
+if [ "$NOME" == "" ] || [ "$DOMINIO" == "" ] || [ "$EMAIL" ==  "" ]; then
+    echo -e '\nUtilização: gerar_certificado [nome] [dominio] [email]\n'
+    exit 1
+fi
+
+echo ''
+echo '============================================'
+echo ' Iniciando geração do certificado HTTPS'
+echo '============================================'
+echo ''
+
+dir=$(pwd)/$(dirname $0)
+
+echo "$NOME" > $dir/__letsnginx
+echo "$DOMINIO" >> $dir/__letsnginx
+echo "$EMAIL" >> $dir/__letsnginx
+
+docker-compose restart nginx
+
+
+echo ''
+echo '============================================'
+echo ' Certificado gerado!'
+echo '============================================'
+echo ''

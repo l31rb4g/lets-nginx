@@ -1,0 +1,36 @@
+#!/bin/bash
+
+
+VARS=/nginx/scripts/__letsnginx
+NOME=$(head -n1 $VARS | tail -n1)
+DOMINIO=$(head -n2 $VARS | tail -n1)
+EMAIL=$(head -n3 $VARS | tail -n1)
+
+if [ "$NOME" == "" ] || [ "$DOMINIO" == "" ] || [ "$EMAIL" ==  "" ]; then
+    echo -e '\nUtilização: gerar_certificado [nome] [dominio] [email]\n'
+    exit 1
+fi
+
+
+CERTS_DIR='/nginx/certs/'$NOME
+
+if [ ! -d $CERTS_DIR ]; then
+    mkdir -p $CERTS_DIR
+fi
+
+
+certbot \
+    certonly \
+    --non-interactive \
+    --standalone \
+    --agree-tos \
+    --email $EMAIL \
+    --domains $DOMINIO
+
+
+find /etc/letsencrypt/archive/$DOMINIO -name 'privkey*.pem' \
+    -exec cp {} $CERTS_DIR/privkey.pem \;
+
+find /etc/letsencrypt/archive/$DOMINIO -name 'fullchain*.pem' \
+    -exec cp {} $CERTS_DIR/fullchain.pem \;
+

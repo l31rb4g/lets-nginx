@@ -1,0 +1,43 @@
+#!/bin/bash
+
+CONFIG_DIR=/etc/nginx/http.d
+
+# http plano
+cp /nginx_conf/default.conf $CONFIG_DIR
+
+
+# verificando se existe um certificado
+EXISTE_CERT=1
+cfg_certs=$(grep '/nginx/certs/' /nginx_conf/https.conf \
+    | grep -v '#' | sed 's/ssl_certificate\(_key\)\?//g' | sed 's/;//')
+for cert in $cfg_certs; do
+    echo $cert
+    if [ ! -f $cert ]; then
+        EXISTE_CERT=0
+    fi
+done
+
+if [ $EXISTE_CERT == 1 ]; then
+
+    # certificado existe, vamos habilitar o https
+    cp /nginx_conf/https.conf $CONFIG_DIR
+
+else
+    
+    # certificado não existe, vamos tentar remover o https
+    if [ -f $CONFIG_DIR/https.conf ]; then
+        rm $CONFIG_DIR/https.conf
+    fi
+fi
+
+
+# geração pendente
+if [ -f /nginx/scripts/__letsnginx ]; then
+    /nginx/scripts/__gerador
+    rm /nginx/scripts/__letsnginx
+else
+
+    # full nginx run
+    nginx -g 'daemon off;'
+fi
+
