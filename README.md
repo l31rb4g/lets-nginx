@@ -16,6 +16,7 @@ NGINX capaz de gerar certificados HTTPs usando o Let's Encrypt.
 
 
 ## Clonando como submodule
+Para utilizar como submódulo de um projeto, rode o seguinte comando na raiz:
 ```
 git submodule add git@gitlab.wbrain.me:magmalab/gitlab.git nginx
 ```
@@ -27,9 +28,7 @@ Crie uma pasta chamada `nginx_conf` na raiz do projeto Essa pasta deve ter 2 arq
   - default.conf
 
     Esse arquivo deve conter apenas configurações para plain http. Esse arquivo sempre é carregado pelo NGINX.
-
 <br>
-
   - https.conf
 
     Esse arquivo deve conter todas as configurações de https. Esse arquivo só será carregado se todos os certificados já tiverem sido gerados. Se os certificados não forem encontrados, o NGINX não carregará o https.conf e servirá apenas plain http (default.conf).
