@@ -29,6 +29,7 @@ Crie uma pasta chamada `nginx_conf` na raiz do projeto Essa pasta deve ter 2 arq
 
     Esse arquivo deve conter apenas configurações para plain http. Esse arquivo sempre é carregado pelo NGINX.
 <br>
+
   - https.conf
 
     Esse arquivo deve conter todas as configurações de https. Esse arquivo só será carregado se todos os certificados já tiverem sido gerados. Se os certificados não forem encontrados, o NGINX não carregará o https.conf e servirá apenas plain http (default.conf).
