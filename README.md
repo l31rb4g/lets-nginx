@@ -1,6 +1,6 @@
 # Let's NGINX!
 
-NGINX capaz de gerar certificados HTTPs magicamente usando o Let's Encrypt.
+NGINX capaz de gerar certificados HTTPs usando o Let's Encrypt.
 Preparado para rodar em stack Docker Compose.
 
 
