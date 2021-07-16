@@ -24,8 +24,19 @@ echo "$EMAIL" >> $dir/__letsnginx
 docker-compose restart nginx
 
 
-echo ''
-echo '============================================'
-echo ' Certificado gerado!'
-echo '============================================'
-echo ''
+SUCESSO=0
+
+if [ -f $dir/../certs/$NOME/privkey.pem ]; then
+    SUCESSO=1
+fi
+
+
+if [ $SUCESSO == 1 ]; then
+    echo ''
+    echo '============================================'
+    echo ' Certificado gerado com sucesso!'
+    echo '============================================'
+    echo ''
+else
+    echo 'Erro! O certificado não foi gerado. Mais informações no log.'
+fi

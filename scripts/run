@@ -11,7 +11,6 @@ EXISTE_CERT=1
 cfg_certs=$(grep '/nginx/certs/' /nginx_conf/https.conf \
     | grep -v '#' | sed 's/ssl_certificate\(_key\)\?//g' | sed 's/;//')
 for cert in $cfg_certs; do
-    echo $cert
     if [ ! -f $cert ]; then
         EXISTE_CERT=0
     fi
