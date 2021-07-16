@@ -36,7 +36,7 @@ Crie uma pasta chamada `nginx_conf` na raiz do projeto Essa pasta deve ter 2 arq
 
 
 ## docker-compose.yml
-Adicione o seguinte trecho ao seu docker-compose.yml
+Adicione o seguinte trecho ao seu `docker-compose.yml`
 ```
 nginx:
 restart: always
