@@ -20,7 +20,7 @@ Para utilizar como submódulo de um projeto, rode o seguinte comando na raiz:
 ```
 git submodule add git@gitlab.wbrain.me:magmalab/gitlab.git nginx
 ```
-/!\ Atenção para o `nginx` no final do comando.
+⚠ Atenção para o `nginx` no final do comando.
 
 
 ## Configuração do NGINX
