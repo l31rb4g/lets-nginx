@@ -18,7 +18,7 @@ NGINX capaz de gerar certificados HTTPs usando o Let's Encrypt.
 ## Clonando como submodule
 Para utilizar como submódulo de um projeto, rode o seguinte comando na raiz:
 ```
-git submodule add git@gitlab.wbrain.me:magmalab/gitlab.git nginx
+git submodule add git@gitlab.wbrain.me:magmalab/lets-nginx.git nginx
 ```
 ⚠ Atenção para o `nginx` no final do comando.
 
