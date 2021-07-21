@@ -26,6 +26,8 @@ docker-compose restart nginx
 
 SUCESSO=0
 
+echo 'verificando arquivo' $dir/../certs/$NOME/privkey.pem
+
 if [ -f $dir/../certs/$NOME/privkey.pem ]; then
     SUCESSO=1
 fi
