@@ -5,24 +5,41 @@ CONFIG_DIR=/etc/nginx/http.d
 # http plano
 cp /nginx_conf/default.conf $CONFIG_DIR
 
+echo "======================================================"
+echo " Let's NGINX!"
+echo "======================================================"
+echo
+
 
 # verificando se existe um certificado
+echo '>>> Lendo configurações'
+echo
 EXISTE_CERT=1
 cfg_certs=$(grep '/nginx/certs/' /nginx_conf/https.conf \
     | grep -v '#' | sed 's/ssl_certificate\(_key\)\?//g' | sed 's/;//')
 for cert in $cfg_certs; do
+    msg="Certificado: $cert"
     if [ ! -f $cert ]; then
         EXISTE_CERT=0
+	msg="[erro] $msg"
+    else
+	msg="[ OK ] $msg"
     fi
+    echo $msg
 done
 
-if [ $EXISTE_CERT == 1 ]; then
+echo
 
+if [ $EXISTE_CERT == 1 ]; then
+    echo '>>> Todos os certificados foram encontratos, habilitando HTTPS...'
+    echo
     # certificado existe, vamos habilitar o https
     cp /nginx_conf/https.conf $CONFIG_DIR
 
 else
-    
+    echo '>>> Um ou mais certificados não foram encontratos. O HTTPS vai ficar desligado.'
+    echo
+
     # certificado não existe, vamos tentar remover o https
     if [ -f $CONFIG_DIR/https.conf ]; then
         rm $CONFIG_DIR/https.conf
