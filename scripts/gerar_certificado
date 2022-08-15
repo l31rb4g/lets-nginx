@@ -9,11 +9,11 @@ if [ "$NOME" == "" ] || [ "$DOMINIO" == "" ] || [ "$EMAIL" ==  "" ]; then
     exit 1
 fi
 
-echo ''
-echo '============================================'
-echo ' Iniciando geração do certificado HTTPS'
-echo '============================================'
-echo ''
+echo ""
+echo "======================================================================================"
+echo " Iniciando geração do certificado HTTPS para $DOMINIO"
+echo "======================================================================================"
+echo ""
 
 dir=$(pwd)/$(dirname $0)
 
