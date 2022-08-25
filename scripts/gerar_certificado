@@ -21,7 +21,7 @@ echo "$NOME" > $dir/__letsnginx
 echo "$DOMINIO" >> $dir/__letsnginx
 echo "$EMAIL" >> $dir/__letsnginx
 
-docker-compose restart nginx
+docker compose restart nginx
 
 
 while [ -f $dir/__letsnginx ]; do
