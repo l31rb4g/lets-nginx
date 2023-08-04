@@ -9,7 +9,7 @@ Let's NGINX é um container docker (compose) que roda um NGINX capaz de gerar ce
 /
 | app/                  - aplicação
 | nginx/                - esse repositório clonado como submódulo
-| nginx_conf/           - pasta com os configs do NGINX (veja o exemplo)
+| nginx_conf/           - pasta com os configs do NGINX (veja nginx_conf.exemplo)
 | docker-compose.yml    - yaml do docker compose
 ```
 
@@ -23,7 +23,7 @@ git submodule add git@gitlab.wbrain.me:magmalab/lets-nginx.git nginx
 
 
 ## Configuração do NGINX
-Crie uma pasta chamada `nginx_conf` na raiz do projeto Essa pasta deve ter 2 arquivos:
+Crie uma pasta chamada `nginx_conf` na raiz do projeto (veja nginx_conf.exemplo). Essa pasta deve ter 2 arquivos:
   - default.conf
 
     Esse arquivo deve conter apenas configurações para plain http. Esse arquivo sempre é carregado pelo NGINX.
