@@ -19,12 +19,11 @@ dir=$(pwd)/$(dirname $0)
 echo $dir
 exit
 
-echo "$NOME" > $dir/__letsnginx
-echo "$DOMINIO" >> $dir/__letsnginx
-echo "$EMAIL" >> $dir/__letsnginx
+echo "$NOME" > $dir/etc/_letsnginx
+echo "$DOMINIO" >> $dir/etc/_letsnginx
+echo "$EMAIL" >> $dir/etc/_letsnginx
 
 docker compose restart nginx
-
 
 while [ -f $dir/__letsnginx ]; do
     echo 'Aguardando certbot...'

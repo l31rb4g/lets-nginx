@@ -12,12 +12,14 @@ echo "======================================================"
 echo
 
 
-# verificando se existe um certificado
+# verificando se todos os certificados mencionados no https.conf realmente existem
 echo '>>> Lendo configurações'
 echo
+
 EXISTE_CERT=1
-cfg_certs=$(grep '/nginx/certs/' /nginx_conf/https.conf \
+cfg_certs=$(grep '/nginx/certificados/' /nginx_conf/https.conf \
     | grep -v '#' | sed 's/ssl_certificate\(_key\)\?//g' | sed 's/;//')
+
 for cert in $cfg_certs; do
     msg="Certificado: $cert"
     if [ ! -f $cert ]; then
@@ -34,14 +36,12 @@ echo
 if [ $EXISTE_CERT == 1 ]; then
     echo '>>> Todos os certificados foram encontrados, habilitando HTTPS...'
     echo
-    # certificado existe, vamos habilitar o https
     cp /nginx_conf/https.conf $CONFIG_DIR
 
 else
     echo '>>> Um ou mais certificados não foram encontrados. O HTTPS vai ficar desligado.'
     echo
 
-    # certificado não existe, vamos tentar remover o https
     if [ -f $CONFIG_DIR/https.conf ]; then
         rm $CONFIG_DIR/https.conf
     fi
@@ -49,12 +49,12 @@ fi
 
 
 # geração pendente
-if [ -f /nginx/scripts/__letsnginx ]; then
-    /nginx/scripts/__gerador
-    rm /nginx/scripts/__letsnginx
-else
+if [ -f /nginx/etc/_letsnginx ]; then
+    /nginx/etc/_gerador
+    rm /nginx/etc/_letsnginx
 
-    # full nginx run
+else
+    # nginx runs
     nginx -g 'daemon off;'
 fi
 

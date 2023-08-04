@@ -1,6 +1,6 @@
 FROM alpine:3.14
 
-RUN apk add nginx vim htop certbot bash
+RUN apk add nginx certbot bash
 
-CMD bash /nginx/scripts/run
+CMD bash /nginx/etc/_run
 

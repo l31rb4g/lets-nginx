@@ -49,17 +49,17 @@ volumes:
 
 
 ## Como gerar/renovar o certificado
-Utilize o script `scripts/gerar_certificado` da seguinte maneira:
+Utilize o script `gerar_certificado` da seguinte maneira:
 ```
-./scripts/gerar_certificado [nome] [domínio] [email]
+./gerar_certificado [nome] [domínio] [email]
 ```
 
 Exemplo:
 ```
-./scripts/gerar_certificado default example.com admin@example.com
+./gerar_certificado default example.com admin@example.com
 ```
 
-Quando você rodar esse comando, o certbot tentará gerar o certificado para o domínio informado. Se o certificado for gerado com sucesso, o NGINX carregará o arquivo `https.conf` e será reiniciado sozinho.
+Quando você rodar esse comando, o certbot tentará gerar o certificado para o domínio informado. Se o certificado for gerado com sucesso, o NGINX carregará o arquivo `https.conf`. Ao final do processo o NGINX reiniciará sozinho.
 
 
-Os certificados serão gerados na pasta `certs/`
+Os certificados serão gerados na pasta `certificados/`
