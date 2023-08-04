@@ -1,17 +1,16 @@
  # Let's NGINX!
 
 <img src="lets-nginx.png" width="32px">
-NGINX capaz de gerar certificados HTTPs usando o Let's Encrypt.
+Let's NGINX é um container docker (compose) que roda um NGINX capaz de gerar certificados HTTPS usando o Let's Encrypt.
 
 
 ## Estrutura de arquivos
 ```
 /
-| app/
-| env/
-| nginx/
-| nginx_conf/
-| docker-compose.yml
+| app/                  - aplicação
+| nginx/                - esse repositório clonado como submódulo
+| nginx_conf/           - pasta com os configs do NGINX (veja o exemplo)
+| docker-compose.yml    - yaml do docker compose
 ```
 
 

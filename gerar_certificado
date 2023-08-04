@@ -16,6 +16,8 @@ echo "==========================================================================
 echo ""
 
 dir=$(pwd)/$(dirname $0)
+echo $dir
+exit
 
 echo "$NOME" > $dir/__letsnginx
 echo "$DOMINIO" >> $dir/__letsnginx
