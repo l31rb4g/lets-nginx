@@ -128,8 +128,9 @@ class LetsNGINX:
                 print('', flush=True)
 
             except Exception as ex:
+                nome = info[0].strip()
                 call(['tail', '/var/log/letsencrypt/letsencrypt.log'])
-                self.log(f'\033[31mCertificado não gerado: {info[0]}\033[m')
+                self.log(f'\033[31mCertificado não gerado: {nome}\033[m')
 
             dominio = info[1].strip().split(',')[0]
             _name = f'/etc/letsencrypt/archive/{dominio}'
