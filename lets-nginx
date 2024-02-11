@@ -1,5 +1,46 @@
-#!/bin/bash
+#!/usr/bin/python3
+import sys
+from subprocess import call
 
+
+class LetsManage:
+
+    def __init__(self):
+        print()
+
+        try:
+            nome = sys.argv[1]
+            dominio = sys.argv[2]
+            email = sys.argv[3]
+        except:
+            print('\nUtilização: lets-nginx [nome] [dominios] [email]\n')
+            sys.exit(1)
+
+        self.log(f'Iniciando requisição de certificado\n')
+        with open('./nginx/etc/_request', 'w') as _f:
+            _f.write(f'{nome}\n{dominio}\n{email}')
+
+        call(['docker', 'compose', 'restart', 'nginx'])
+
+    def log(self, msg):
+        TAG = '\033[1m[let\'s nginx]\033[m'
+        print(f'{TAG} {msg}', flush=True)
+
+
+if __name__ == '__main__':
+    LetsManage()
+
+
+
+
+
+
+
+
+
+
+
+'''
 NOME="$1"
 DOMINIO="$2"
 EMAIL="$3"
@@ -51,3 +92,4 @@ if [ $SUCESSO == 1 ]; then
 else
     echo 'Erro! O certificado não foi gerado. Mais informações no log.'
 fi
+'''

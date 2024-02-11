@@ -1,4 +1,2 @@
 
-certificados/*.pem
-certificados/**/*.pem
-
+etc/letsencrypt/*

@@ -1,6 +1,0 @@
-FROM alpine:3.14
-
-RUN apk add nginx certbot bash
-
-CMD bash /nginx/etc/_run
-
