@@ -67,11 +67,8 @@ class LetsNGINX:
             certs = check_output(['find', archive, '-type', 'd']).decode().split('\n')
             for cert in certs:
                 if cert and cert != archive:
-                    #nome = 'default'
-
                     with open(f'{cert}/.name') as _f:
                        nome = _f.read().strip()
-                       print('nome from file', nome)
 
                     dominio = cert.replace(f'{archive}/', '')
 
