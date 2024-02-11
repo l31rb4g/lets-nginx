@@ -9,7 +9,7 @@ Let's NGINX é um container docker (compose) que roda um NGINX capaz de gerar ce
 /
 | app/                  - aplicação
 | nginx/                - esse repositório clonado como submódulo
-| nginx_conf/           - pasta com os configs do NGINX (veja nginx_conf.exemplo)
+| nginx_conf/           - pasta com os configs do NGINX
 | docker-compose.yml    - yaml do docker compose
 ```
 
@@ -81,8 +81,8 @@ server {
     listen       443 ssl;
     server_name  default;
 
-    ssl_certificate     /nginx/certs/backend/fullchain.pem;
-    ssl_certificate_key /nginx/certs/backend/privkey.pem;
+    ssl_certificate     /nginx/certs/default/fullchain.pem;
+    ssl_certificate_key /nginx/certs/default/privkey.pem;
 
     location / {
         proxy_pass http://nginx:8000;
