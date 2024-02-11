@@ -130,9 +130,10 @@ class LetsNGINX:
                 self.log(f'\033[31mCertificado não gerado: {info[0]}\033[m')
 
             dominio = info[1].strip().split(',')[0]
-            print('dominio', dominio)
-            with open(f'/etc/letsencrypt/archive/{dominio}/.name', 'w') as _f:
-                _f.write(info[0].strip())
+            _name = f'/etc/letsencrypt/archive/{dominio}'
+            if os.path.exists(_name):
+                with open(f'{_name}/.name', 'w') as _f:
+                    _f.write(info[0].strip())
 
             os.remove('/nginx/etc/_request')
 
