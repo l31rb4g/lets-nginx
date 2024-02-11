@@ -14,14 +14,14 @@ class LetsNGINX:
         print('\n\n')
         self.log('\033[1;32mLet\'s NGINX!\033[m')
 
-        self._link_certs()
-
         if os.path.exists('/nginx/etc/_request'):
             self.log('Nova requisição encontrada\n')
             self._generate()
         else:
             self.log('Renovando certificados')
             self._renew()
+
+        self._link_certs()
 
         for cfg in ['default', 'https']:
             _from = f'/nginx_conf/{cfg}.conf'
