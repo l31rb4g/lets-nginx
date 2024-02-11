@@ -86,7 +86,7 @@ class LetsNGINX:
                             certname = os.path.basename(pem)
                             dest = f'/certs/{nome}/{certname}'
                             call(['ln', '-s', pem, dest])
-                            self.log(dest)
+                            self.log(f'  {dest}')
 
     def _validate_https(self, filepath) -> bool:
         self.log('Validando https')
