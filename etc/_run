@@ -70,7 +70,7 @@ class LetsNGINX:
                     #nome = 'default'
 
                     with open(f'{cert}/.name') as _f:
-                       nome = _f.read().decode().strip()
+                       nome = _f.read().strip()
                        print('nome from file', nome)
 
                     dominio = cert.replace(f'{archive}/', '')
