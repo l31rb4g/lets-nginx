@@ -61,3 +61,31 @@ Exemplo:
 
 Quando você rodar esse comando, o certbot tentará gerar o certificado para o domínio informado. Se o certificado for gerado com sucesso, o NGINX carregará o arquivo `https.conf`. Ao final do processo o NGINX reiniciará sozinho.
 
+
+## Exemplo de arquivo default.conf
+```
+server {
+    listen       80;
+    server_name  default;
+
+    location / {
+        proxy_pass http://nginx:8000;
+    }
+}
+```
+
+
+## Exemplo de arquivo https.conf
+```
+server {
+    listen       443 ssl;
+    server_name  default;
+
+    ssl_certificate     /nginx/certs/backend/fullchain.pem;
+    ssl_certificate_key /nginx/certs/backend/privkey.pem;
+
+    location / {
+        proxy_pass http://nginx:8000;
+    }
+```
+
