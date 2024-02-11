@@ -84,7 +84,9 @@ class LetsNGINX:
                     for pem in pems:
                         if pem:
                             certname = os.path.basename(pem)
-                            call(['ln', '-s', pem, f'/certs/{nome}/{certname}'])
+                            dest = f'/certs/{nome}/{certname}'
+                            call(['ln', '-s', pem, dest])
+                            self.log(dest)
 
     def _validate_https(self, filepath) -> bool:
         self.log('Validando https')
