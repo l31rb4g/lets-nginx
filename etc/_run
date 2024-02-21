@@ -2,8 +2,9 @@
 import os
 import re
 import sys
-import traceback
 import shutil
+import datetime
+import traceback
 from time import sleep
 from subprocess import call, check_output, PIPE
 
@@ -12,12 +13,12 @@ class LetsNGINX:
 
     def __init__(self):
         print('\n\n')
-        self.log('\033[1;32mLet\'s NGINX!\033[m')
+        self.log('\033[1;32mLet\'s NGINX!\033[m {}'.format(datetime.datetime.now()))
 
         if os.path.exists('/nginx/etc/_request'):
             self.log('Nova requisição encontrada\n')
             self._generate()
-        else:
+        elif os.path.exists('/nginx/etc/_renew'):
             self.log('Renovando certificados')
             self._renew()
 
@@ -143,6 +144,7 @@ class LetsNGINX:
         for line in out:
             print(f'\033[33m{line}\033[m', flush=True)
         print('', flush=True)
+        os.remove('/nginx/etc/_renew')
 
 if __name__ == '__main__':
     LetsNGINX()

@@ -7,7 +7,6 @@ Let's NGINX é um container docker (compose) que roda um NGINX capaz de gerar ce
 ## Estrutura de arquivos
 ```
 /
-| app/                  - aplicação
 | nginx/                - esse repositório clonado como submódulo
 | nginx_conf/           - pasta com os configs do NGINX
 | docker-compose.yml    - yaml do docker compose
@@ -51,12 +50,14 @@ volumes:
 ## Como gerar um certificado
 Utilize o script `lets-nginx` da seguinte maneira:
 ```
-./nginx/lets-nginx [nome] [domínio] [email]
+  - lets-nginx new [nome] [dominios] [email]
+  - lets-nginx renew
 ```
 
 Exemplo:
 ```
-./nginx/lets-nginx default example.com admin@example.com
+./nginx/lets-nginx new default example.com admin@example.com
+./nginx/lets-nginx renew
 ```
 
 Quando você rodar esse comando, o certbot tentará gerar o certificado para o domínio informado. Se o certificado for gerado com sucesso, o NGINX carregará o arquivo `https.conf`. Ao final do processo o NGINX reiniciará sozinho.
