@@ -82,8 +82,8 @@ server {
     listen       443 ssl;
     server_name  default;
 
-    ssl_certificate     /nginx/certs/default/fullchain.pem;
-    ssl_certificate_key /nginx/certs/default/privkey.pem;
+    ssl_certificate     /certs/default/fullchain.pem;
+    ssl_certificate_key /certs/default/privkey.pem;
 
     location / {
         proxy_pass http://nginx:8000;
