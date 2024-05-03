@@ -37,13 +37,13 @@ Crie uma pasta chamada `nginx_conf` na raiz do projeto (veja nginx_conf.exemplo)
 Adicione o seguinte trecho ao seu `docker-compose.yml`
 ```
 nginx:
-restart: always
-build:
-  context: ./nginx
-volumes:
-  - ./nginx:/nginx
-  - ./nginx/etc/letsencrypt:/etc/letsencrypt
-  - ./nginx_conf:/nginx_conf
+    restart: always
+    build:
+        context: ./nginx
+    volumes:
+        - ./nginx:/nginx
+        - ./nginx/etc/letsencrypt:/etc/letsencrypt
+        - ./nginx_conf:/nginx_conf
 ```
 
 
@@ -70,7 +70,7 @@ server {
     server_name  default;
 
     location / {
-        proxy_pass http://nginx:8000;
+        proxy_pass http://app:8000;
     }
 }
 ```
@@ -82,11 +82,12 @@ server {
     listen       443 ssl;
     server_name  default;
 
-    ssl_certificate     /nginx/certs/default/fullchain.pem;
-    ssl_certificate_key /nginx/certs/default/privkey.pem;
+    ssl_certificate     /certs/default/fullchain.pem;
+    ssl_certificate_key /certs/default/privkey.pem;
 
     location / {
-        proxy_pass http://nginx:8000;
+        proxy_pass http://app:8000;
     }
+}
 ```
 
