@@ -5,6 +5,7 @@ import sys
 import shutil
 import datetime
 import traceback
+import subprocess
 from time import sleep
 from subprocess import call, check_output, PIPE
 
@@ -140,9 +141,17 @@ class LetsNGINX:
 
     def _renew(self):
         print()
-        out = check_output(['certbot', 'renew'], stderr=PIPE).decode().strip().split('\n')
-        for line in out:
-            print(f'\033[33m{line}\033[m', flush=True)
+        def execute(cmd):
+            popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True)
+            for stdout_line in iter(popen.stdout.readline, ""):
+                yield stdout_line 
+            popen.stdout.close()
+            return_code = popen.wait()
+            if return_code:
+                raise subprocess.CalledProcessError(return_code, cmd)
+
+        for line in execute(['certbot', 'renew']):
+            print(f'\033[33m{line}\033[m', end='', flush=True)
         print('', flush=True)
         os.remove('/nginx/etc/_renew')
 
