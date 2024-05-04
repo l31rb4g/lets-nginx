@@ -48,16 +48,16 @@ nginx:
 
 
 ## Como gerar um certificado
-Utilize o script `lets-nginx` da seguinte maneira:
+Utilize o script `lets` da seguinte maneira:
 ```
-  - lets-nginx new [nome] [dominios] [email]
-  - lets-nginx renew
+  - lets create [nome] [dominios] [email]
+  - lets renew
 ```
 
 Exemplo:
 ```
-./nginx/lets-nginx new default example.com admin@example.com
-./nginx/lets-nginx renew
+./nginx/lets create default example.com admin@example.com
+./nginx/lets renew
 ```
 
 Quando você rodar esse comando, o certbot tentará gerar o certificado para o domínio informado. Se o certificado for gerado com sucesso, o NGINX carregará o arquivo `https.conf`. Ao final do processo o NGINX reiniciará sozinho.

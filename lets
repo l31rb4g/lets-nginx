@@ -12,7 +12,7 @@ class LetsManage:
             self._help()
         else:
             cmd = sys.argv[1]
-            if cmd == 'new':
+            if cmd == 'create':
                 if len(sys.argv) == 5:
                     nome = sys.argv[2]
                     dominio = sys.argv[3]
@@ -39,8 +39,8 @@ class LetsManage:
 
     def _help(self):
         msg = 'Utilização:\n'
-        msg += '  - lets-nginx new [nome] [dominios] [email]\n'
-        msg += '  - lets-nginx renew\n'
+        msg += '  - lets create [nome] [dominios] [email]\n'
+        msg += '  - lets renew\n'
 
         print(msg)
         sys.exit(1)

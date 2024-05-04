@@ -152,11 +152,11 @@ class LetsNGINX:
             if return_code:
                 raise subprocess.CalledProcessError(return_code, cmd)
 
-        for line in execute(['certbot', 'renew']):
+        for line in execute(['certbot', '--no-random-sleep-on-renew', 'renew']):
             print(f'\033[33m{line}\033[m', end='', flush=True)
         print('', flush=True)
 
-        call(['/nginx/etc/_renew'])
+        call(['/nginx/etc/renew'])
 
         os.remove('/nginx/etc/_renew')
 
