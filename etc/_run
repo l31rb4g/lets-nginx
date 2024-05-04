@@ -146,6 +146,9 @@ class LetsNGINX:
         for line in out:
             print(f'\033[33m{line}\033[m', flush=True)
         print('', flush=True)
+
+        call(['/nginx/etc/_renew'])
+
         os.remove('/nginx/etc/_renew')
 
 if __name__ == '__main__':
