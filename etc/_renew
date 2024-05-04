@@ -6,6 +6,7 @@ certs=$(find -name '*2.pem')
 
 for cert2 in $certs; do
     cert1=$(echo $cert2 | sed 's/2\.pem/1.pem/')
+    echo 'Renovando' $cert1
     mv $cert2 $cert1
 done
 
