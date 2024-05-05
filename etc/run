@@ -149,7 +149,7 @@ class LetsNGINX:
                     if os.path.exists(f'/certs/{nome}'):
                         call(['rm', '-rf', f'/certs/{nome}'])
 
-                    call(['ln', '-s', f'{live}/{nome}', f'/certs/{dominio}'])
+                    call(['ln', '-s', f'{live}/{dominio}', f'/certs/{nome}'])
 
     def _link_certs_OLD(self):
         self.log('Linkando certificados')
