@@ -131,6 +131,7 @@ class LetsNGINX:
     def _link_certs(self):
         self.log('Linkando certificados')
         archive = '/etc/letsencrypt/archive'
+        live = '/etc/letsencrypt/live'
 
         if os.path.exists('/certs'):
             shutil.rmtree('/certs')
@@ -148,7 +149,7 @@ class LetsNGINX:
                     if os.path.exists(f'/certs/{nome}'):
                         call(['rm', '-rf', f'/certs/{nome}'])
 
-                    call(['ln', '-s', f'{archive}/{nome}', f'/certs/{nome}'])
+                    call(['ln', '-s', f'{live}/{nome}', f'/certs/{nome}'])
 
     def _link_certs_OLD(self):
         self.log('Linkando certificados')
