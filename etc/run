@@ -29,7 +29,6 @@ class LetsNGINX:
             _to = f'/etc/nginx/http.d/{cfg}.conf'
 
             if os.path.exists(_to):
-                self.log(f'Limpando {cfg}.conf')
                 os.remove(_to)
 
             if os.path.exists(_from):
@@ -127,7 +126,6 @@ class LetsNGINX:
 
         os.remove('/nginx/etc/_renew')
 
-
     def _link_certs(self):
         self.log('Linkando certificados')
         archive = '/etc/letsencrypt/archive'
@@ -150,36 +148,7 @@ class LetsNGINX:
                         call(['rm', '-rf', f'/certs/{nome}'])
 
                     call(['ln', '-s', f'{live}/{dominio}', f'/certs/{nome}'])
-
-    def _link_certs_OLD(self):
-        self.log('Linkando certificados')
-        archive = '/etc/letsencrypt/archive'
-
-        if os.path.exists('/certs'):
-            shutil.rmtree('/certs')
-        os.mkdir('/certs')
-
-        if os.path.exists(archive):
-            certs = check_output(['find', archive, '-type', 'd']).decode().split('\n')
-            for cert in certs:
-                if cert and cert != archive:
-                    with open(f'{cert}/.name') as _f:
-                       nome = _f.read().strip()
-
-                    dominio = cert.replace(f'{archive}/', '')
-
-                    if os.path.exists(f'/certs/{nome}'):
-                        call(['rm', '-rf', f'/certs/{nome}'])
-
-                    os.mkdir(f'/certs/{nome}')
-
-                    pems = check_output(['find', cert, '-name', '*.pem']).decode().split('\n')
-                    for pem in pems:
-                        if pem:
-                            certname = os.path.basename(pem)
-                            dest = f'/certs/{nome}/{certname}'
-                            call(['ln', '-s', pem, dest])
-                            self.log(f'  {dest}')
+                    self.log(f'  /certs/{nome}')
 
 if __name__ == '__main__':
     LetsNGINX()
