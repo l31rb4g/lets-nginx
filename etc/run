@@ -118,7 +118,8 @@ class LetsNGINX:
             popen.stdout.close()
             return_code = popen.wait()
             if return_code:
-                raise subprocess.CalledProcessError(return_code, cmd)
+                #raise subprocess.CalledProcessError(return_code, cmd)
+                yield '[ERRO] Não foi possível renovar o certificado'
 
         for line in execute(['certbot', '--no-random-sleep-on-renew', 'renew']):
             print(f'\033[33m{line}\033[m', end='', flush=True)
