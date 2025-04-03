@@ -89,7 +89,8 @@ class LetsNGINX:
                     --standalone \
                     --agree-tos \
                     --email {info[2]} \
-                    --domains {info[1]} \
+                    -d {info[1]} \
+                    -d *.{info[1]} \
                 ''', shell=True, stderr=PIPE).decode().strip().split('\n')
 
                 for line in out:
