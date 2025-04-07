@@ -1,0 +1,155 @@
+#!/usr/bin/python3
+import os
+import re
+import sys
+import shutil
+import datetime
+import traceback
+import subprocess
+from time import sleep
+from subprocess import call, check_output, PIPE
+
+
+class LetsNGINX:
+    def __init__(self):
+        print('\n\n')
+        self.log('\033[1;32mLet\'s NGINX!\033[m {}'.format(datetime.datetime.now()))
+
+        if os.path.exists('/nginx/etc/_request'):
+            self.log('Nova requisição encontrada\n')
+            self._generate()
+        elif os.path.exists('/nginx/etc/_renew'):
+            self.log('Renovando certificados')
+            self._renew()
+
+        self._link_certs()
+
+        for cfg in ['default', 'https']:
+            _from = f'/nginx_conf/{cfg}.conf'
+            _to = f'/etc/nginx/http.d/{cfg}.conf'
+
+            if os.path.exists(_to):
+                os.remove(_to)
+
+            if os.path.exists(_from):
+                if cfg == 'https':
+                    if not self._validate_https(_from):
+                        self.log((f'\033[35mO https vai ficar desativado porque não foi possível localizar '
+                                  'todos os certificados.\033[m'))
+                        continue
+
+                    self.log(f'\033[7;49;92m ✅ Todos os certificados foram encontrados! \033[m')
+
+                self.log(f'Copiando {cfg}.conf')
+                shutil.copyfile(_from, _to)
+
+        self.run()
+
+        self.log('fallback')
+        while True:
+            sleep(3600)
+
+    def run(self):
+        self.log('Iniciando o NGINX')
+        call(['nginx', '-g' 'daemon off;'])
+
+    def log(self, msg):
+        TAG = '\033[1m[let\'s nginx]\033[m'
+        print(f'{TAG} {msg}', flush=True)
+
+    def _validate_https(self, filepath) -> bool:
+        self.log('Validando https')
+        out = True
+
+        with open(filepath) as _f:
+            for _line in _f.readlines():
+                line = _line.strip()
+                if line and re.match('ssl_certificate', line):
+                    cert = re.findall('ssl_([^ ]+) (.*);', line)[0]
+                    cert_type = cert[0].strip()
+                    cert_path = cert[1].strip()
+                    color = ''
+
+                    if os.path.exists(cert_path):
+                        cert_status = '\033[32m[OK]\033[m'
+                    else:
+                        cert_status = '\033[31m[NOT FOUND]\033[m'
+                        out = False
+
+                    self.log(f'{cert_status} {cert_path}')
+        return out
+
+    def _generate(self):
+        with open('/nginx/etc/_request') as _f:
+            info = _f.readlines()
+            try:
+                out = check_output(f'''certbot \
+                    certonly \
+                    --non-interactive \
+                    --standalone \
+                    --agree-tos \
+                    --email {info[2]} \
+                    --domains {info[1]} \
+                ''', shell=True, stderr=PIPE).decode().strip().split('\n')
+
+                for line in out:
+                    print(f'\033[33m{line}\033[m', flush=True)
+                print('', flush=True)
+
+            except Exception as ex:
+                nome = info[0].strip()
+                call(['tail', '/var/log/letsencrypt/letsencrypt.log'])
+                self.log(f'\033[31mCertificado não gerado: {nome}\033[m')
+
+            dominio = info[1].strip().split(',')[0]
+            _name = f'/etc/letsencrypt/archive/{dominio}'
+            if os.path.exists(_name):
+                with open(f'{_name}/.name', 'w') as _f:
+                    _f.write(info[0].strip())
+
+            os.remove('/nginx/etc/_request')
+
+    def _renew(self):
+        print()
+        def execute(cmd):
+            popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True)
+            for stdout_line in iter(popen.stdout.readline, ""):
+                yield stdout_line 
+            popen.stdout.close()
+            return_code = popen.wait()
+            if return_code:
+                raise subprocess.CalledProcessError(return_code, cmd)
+
+        for line in execute(['certbot', '--no-random-sleep-on-renew', 'renew']):
+            print(f'\033[33m{line}\033[m', end='', flush=True)
+        print('', flush=True)
+
+        os.remove('/nginx/etc/_renew')
+
+    def _link_certs(self):
+        self.log('Linkando certificados')
+        archive = '/etc/letsencrypt/archive'
+        live = '/etc/letsencrypt/live'
+
+        if os.path.exists('/certs'):
+            shutil.rmtree('/certs')
+        os.mkdir('/certs')
+
+        if os.path.exists(archive):
+            certs = check_output(['find', archive, '-type', 'd']).decode().split('\n')
+            for cert in certs:
+                if cert and cert != archive:
+                    with open(f'{cert}/.name') as _f:
+                       nome = _f.read().strip()
+
+                    dominio = cert.replace(f'{archive}/', '')
+
+                    if os.path.exists(f'/certs/{nome}'):
+                        call(['rm', '-rf', f'/certs/{nome}'])
+
+                    call(['ln', '-s', f'{live}/{dominio}', f'/certs/{nome}'])
+                    self.log(f'  /certs/{nome}')
+
+if __name__ == '__main__':
+    LetsNGINX()
+
