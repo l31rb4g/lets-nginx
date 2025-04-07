@@ -11,6 +11,7 @@ class LetsNGINX:
     version = '3.0'
 
     def __init__(self):
+        self.log()
         self.log(f'=' * 60)
         self.log(f'Let\'s NGINX {self.version}')
         self.log(f'=' * 60)
@@ -50,6 +51,8 @@ class LetsNGINX:
                 print(out.decode())
 
             self.log(f'-' * 60)
+
+            call(['certbot', 'certificates'])
 
         self.run()
 
