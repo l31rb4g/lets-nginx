@@ -39,7 +39,7 @@ class LetsNGINX:
                 call(['cp', f'{PATH_CERTS}/{cert_name}', f'{PATH_REGISTRY}/{cert_name}'])
                 domain_list = ','.join(domains)
 
-                out = check_output([
+                out = check_output(['echo',
                     'certbot',
                     'certonly',
                     '--non-interactive',
