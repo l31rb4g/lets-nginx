@@ -13,7 +13,7 @@ class LetsManage:
         else:
             cmd = sys.argv[1]
 
-            if cmd == 'info':
+            if cmd == 'certificates':
                 call(['docker', 'compose', 'exec', 'nginx', 'certbot', 'certificates'])
 
             elif cmd == 'delete':
