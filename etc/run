@@ -127,6 +127,7 @@ class LetsNGINX:
         self.log()
         self.log('Validando configuração')
         self.log('-' * 60)
+        enabled = []
 
         for cfg in ['default', 'https']:
             _from = f'/nginx_conf/{cfg}.conf'
@@ -146,8 +147,10 @@ class LetsNGINX:
                     self.log(f'\033[7;49;92m ✅ Todos os certificados foram encontrados! \033[m')
                     self.log()
 
-                self.log(f'Habilitando {cfg}.conf')
+                enabled.append(f'{cfg}.conf')
                 shutil.copyfile(_from, _to)
+
+        self.log('Configurações habilitadas: ' + ', '.join(enabled))
 
     def _validate_https(self, filepath) -> bool:
         out = True
