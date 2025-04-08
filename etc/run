@@ -22,7 +22,7 @@ class LetsNGINX:
 
         certs = self._list_certs()
         self.log(f'Certificados encontrados: {len(certs)}')
-        self.log('-' * 60
+        self.log('-' * 60)
 
         for cert_name in certs:
             self.log(f'Certificado: {cert_name}')
