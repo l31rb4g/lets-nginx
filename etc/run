@@ -11,7 +11,7 @@ class LetsNGINX:
     version = '3.0'
 
     def __init__(self):
-        self.log()
+        self.log('\n' * 10)
         self.log(f'=' * 60)
         self.log(f'Let\'s NGINX {self.version}')
         self.log(f'=' * 60)
@@ -47,8 +47,9 @@ class LetsNGINX:
                     '--agree-tos',
                     '--email', email,
                     '-d', domain_list,
-                ])
-                print(out.decode())
+                ], stderr=PIPE)
+
+                print('033[33m\n' + out.decode() + '\033[m')
 
             self.log(f'-' * 60)
 
