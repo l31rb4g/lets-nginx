@@ -15,14 +15,16 @@ class LetsNGINX:
         self.log(f'=' * 60)
         self.log(f'Let\'s NGINX {self.version}')
         self.log(f'=' * 60)
-        self.log()
 
         if not os.path.exists(PATH_REGISTRY):
-            self.log('>>> Inicializando registro...')
             os.mkdir(PATH_REGISTRY)
             self.log()
 
-        for cert_name in self._list_certs():
+        certs = self._list_certs()
+        self.log(f'Certificados encontrados: {len(certs)}')
+        self.log('-' * 60
+
+        for cert_name in certs:
             self.log(f'Certificado: {cert_name}')
 
             domains, email = self._read_cert(cert_name)
