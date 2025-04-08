@@ -198,7 +198,7 @@ class LetsNGINX:
                 raise CalledProcessError(return_code, cmd)
 
         for line in execute(['certbot', '--no-random-sleep-on-renew', 'renew']):
-            self.log(f'\033[33m{line}\033[m', end='', flush=True)
+            self.log(f'\033[33m{line.strip()}\033[m')
         self.log()
 
         os.remove('/nginx/etc/_renew')

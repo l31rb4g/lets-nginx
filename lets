@@ -13,7 +13,10 @@ class LetsManage:
         else:
             cmd = sys.argv[1]
 
-            if cmd == 'delete':
+            if cmd == 'info':
+                call(['docker', 'compose', 'exec', 'nginx', 'certbot', 'delete'])
+
+            elif cmd == 'delete':
                 call(['docker', 'compose', 'exec', 'nginx', 'certbot', 'delete'])
 
             elif cmd == 'reset':
