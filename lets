@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import sys
-from subprocess import call
+from subprocess import call, check_output
 
 
 class LetsManage:
@@ -21,8 +21,12 @@ class LetsManage:
                 call(['docker', 'compose', 'exec', 'nginx', 'certbot', 'delete'])
 
             elif cmd == 'reset':
-                call(['docker', 'compose', 'exec', 'nginx', 'rm', '-rf', '/certs'])
-                call(['docker', 'compose', 'exec', 'nginx', 'certbot', 'deleteall'])
+                #call(['docker', 'compose', 'exec', 'nginx', 'rm', '-rf', '/certs'])
+                certs = check_output('docker compose nginx certbot certificates | grep \'Certificate Name:\'',
+                                     shell=True)
+                for cert in certs:
+                    print(cert)
+                    call(['echo', 'docker', 'compose', 'exec', 'nginx', 'certbot', 'delete'])
 
             elif cmd == 'renew':
                 self.log(f'Iniciando renovação\n')
