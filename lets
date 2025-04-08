@@ -21,12 +21,14 @@ class LetsManage:
                 call(['docker', 'compose', 'exec', 'nginx', 'certbot', 'delete'])
 
             elif cmd == 'reset':
-                #call(['docker', 'compose', 'exec', 'nginx', 'rm', '-rf', '/certs'])
+                call(['docker', 'compose', 'exec', 'nginx', 'rm', '-rf', '/certs'])
                 certs = check_output('docker compose exec nginx certbot certificates | grep \'Certificate Name:\'',
                                      shell=True, stderr=PIPE).decode().strip().split('\n')
                 for cert in certs:
-                    print(cert)
-                    call(['echo', 'docker', 'compose', 'exec', 'nginx', 'certbot', 'delete'])
+                    cert_name = cert.split(': ')[1].strip()
+                    print('>>> Excluindo ' + cert_name)
+                    call(['docker', 'compose', 'exec', 'nginx',
+                          'certbot', 'delete', '--non-interactive', '--cert-name', cert_name])
 
             elif cmd == 'renew':
                 self.log(f'Iniciando renovação\n')
