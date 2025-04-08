@@ -3,7 +3,7 @@ import os
 import re
 import shutil
 from time import sleep
-from subprocess import call, check_output, PIPE
+from subprocess import call, check_output, PIPE, Popen, CalledProcessError
 
 
 PATH_CERTS = '/certs'
@@ -190,13 +190,13 @@ class LetsNGINX:
     def renew(self):
         print()
         def execute(cmd):
-            popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True)
+            popen = Popen(cmd, stdout=PIPE, universal_newlines=True)
             for stdout_line in iter(popen.stdout.readline, ""):
                 yield stdout_line 
             popen.stdout.close()
             return_code = popen.wait()
             if return_code:
-                raise subprocess.CalledProcessError(return_code, cmd)
+                raise CalledProcessError(return_code, cmd)
 
         for line in execute(['certbot', '--no-random-sleep-on-renew', 'renew']):
             print(f'\033[33m{line}\033[m', end='', flush=True)
