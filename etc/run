@@ -31,8 +31,8 @@ class LetsNGINX:
     def run(self):
         self.log()
         self.log('Iniciando o NGINX')
-        #call(['nginx', '-g' 'daemon off;'])
-        call(['tail', '-f', '/dev/null'])
+        call(['nginx', '-g' 'daemon off;'])
+        #call(['tail', '-f', '/dev/null'])
 
     def processar_certificados(self):
         '''Lê a configuração e emite os certificados pelo certbot, se necessário'''
