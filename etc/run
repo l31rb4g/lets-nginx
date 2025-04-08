@@ -31,6 +31,7 @@ class LetsNGINX:
     def run(self):
         self.log()
         self.log('Iniciando o NGINX')
+        self.log('-' * 60)
         call(['nginx', '-g' 'daemon off;'])
 
     def processar_certificados(self):
@@ -129,6 +130,8 @@ class LetsNGINX:
         enabled = []
 
         for cfg in ['default', 'https']:
+            self.log(f'\033[36m{cfg}\033[m')
+
             _from = f'/nginx_conf/{cfg}.conf'
             _to = f'/etc/nginx/http.d/{cfg}.conf'
 
@@ -136,12 +139,17 @@ class LetsNGINX:
                 os.remove(_to)
 
             if os.path.exists(_from):
+                if cfg == 'default':
+                    self.log('Configuração habilitada.')
+                    self.log()
+
                 if cfg == 'https':
                     if not self._validate_https(_from):
                         self.log((f'\033[35mO https vai ficar desativado porque não foi possível localizar '
                                   'todos os certificados.\033[m'))
                         continue
 
+                    self.log('Configuração habilitada.')
                     self.log()
                     self.log(f'\033[7;49;92m ✅ Todos os certificados foram encontrados! \033[m')
                     self.log()
