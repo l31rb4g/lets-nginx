@@ -15,9 +15,9 @@ class LetsManage:
 
             if cmd == 'info':
                 print('\033[36m/certs\033[m')
-                call(['docker', 'compose', 'exec', 'nginx', 'ls', '-la', '/certs'])
+                call(['docker', 'compose', 'exec', 'nginx', 'tree', '/certs'])
 
-                print('\033[36mCertbot\033[m')
+                print('\n\033[36mCertbot\033[m')
                 call(['docker', 'compose', 'exec', 'nginx', 'certbot', 'certificates'])
 
             elif cmd == 'delete':
