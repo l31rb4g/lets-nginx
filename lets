@@ -26,7 +26,7 @@ class LetsManage:
                     self._help()
 
             elif cmd == 'delete':
-                call(['certbot', 'delete'])
+                call(['docker', 'compose', 'exec', 'certbot', 'delete'])
 
             elif cmd == 'renew':
                 self.log(f'Iniciando renovação\n')
