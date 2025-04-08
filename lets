@@ -23,7 +23,7 @@ class LetsManage:
             elif cmd == 'reset':
                 #call(['docker', 'compose', 'exec', 'nginx', 'rm', '-rf', '/certs'])
                 certs = check_output('docker compose exec nginx certbot certificates | grep \'Certificate Name:\'',
-                                     shell=True).decode().strip()
+                                     shell=True).decode().strip().split('\n')
                 for cert in certs:
                     print(cert)
                     call(['echo', 'docker', 'compose', 'exec', 'nginx', 'certbot', 'delete'])
