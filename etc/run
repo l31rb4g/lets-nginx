@@ -151,8 +151,8 @@ class LetsNGINX:
 
                     if os.path.exists(cert_path):
                         cert_status = '\033[32m[OK]\033[m'
-                        _date = check_output(f"ls -la {cert_path} | awk '{print $6,$7}'", shell=True).decode()
-                        cert_date = f'({_date})'
+                        _date = check_output('ls -la ' + cert_path + ' | awk "{print $6,$7}"', shell=True)
+                        cert_date = f'({_date.decode()})'
                     else:
                         cert_status = '\033[31m[NOT FOUND]\033[m'
                         out = False
