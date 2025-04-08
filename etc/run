@@ -21,6 +21,7 @@ class LetsNGINX:
         self.log()
 
         self.processar_certificados()
+        self.enable_confs()
         self.run()
 
     def log(self, msg=''):
@@ -86,8 +87,6 @@ class LetsNGINX:
             self.log(f'-' * 60)
     
     def link(self, cert_name:str, filename:str):
-        self.log('Linkando certificado ' + filename)
-
         if not os.path.exists(PATH_CERTS):
             os.mkdir(PATH_CERTS)
 
@@ -112,7 +111,26 @@ class LetsNGINX:
         email = _cert[-1].strip()
         return (domains, email)
 
-    '''
+    def enable_confs(self):
+        for cfg in ['default', 'https']:
+            _from = f'/nginx_conf/{cfg}.conf'
+            _to = f'/etc/nginx/http.d/{cfg}.conf'
+
+            if os.path.exists(_to):
+                os.remove(_to)
+
+            if os.path.exists(_from):
+                if cfg == 'https':
+                    if not self._validate_https(_from):
+                        self.log((f'\033[35mO https vai ficar desativado porque não foi possível localizar '
+                                  'todos os certificados.\033[m'))
+                        continue
+
+                    self.log(f'\033[7;49;92m ✅ Todos os certificados foram encontrados! \033[m')
+
+                self.log(f'Copiando {cfg}.conf')
+                shutil.copyfile(_from, _to)
+
     def _validate_https(self, filepath) -> bool:
         self.log('Validando https')
         out = True
@@ -134,7 +152,6 @@ class LetsNGINX:
 
                     self.log(f'{cert_status} {cert_path}')
         return out
-    '''
 
 if __name__ == '__main__':
     LetsNGINX()
