@@ -72,7 +72,6 @@ class LetsNGINX:
                 except:
                     error = check_output(['tail', '-n1', '/var/log/letsencrypt/letsencrypt.log']).decode().strip()
                     self.log(f'\033[31m{error}\033[m')
-                    sleep(60)
 
                 if not error:
                     for line in out.decode().split('\n'):
