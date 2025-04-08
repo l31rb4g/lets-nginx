@@ -148,8 +148,8 @@ class LetsNGINX:
                                   'todos os certificados.\033[m'))
                         continue
 
-                    self.log()
                     self.log(f'\033[7;49;92m ✅ Todos os certificados foram encontrados! \033[m')
+                    self.log('-' * 60)
                     self.log()
 
                 enabled.append(f'{cfg}.conf')
