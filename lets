@@ -19,7 +19,7 @@ class LetsManage:
 
             elif cmd == 'delete':
                 call(['docker', 'compose', 'exec', 'nginx', 'certbot', 'delete'])
-                print('\nRemova a pasta correspondente em /certs')
+                print('\nRemova a pasta correspondente em /certs\n')
 
             elif cmd == 'reset':
                 print('>>> Excluindo /certs')
