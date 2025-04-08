@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import os
 import re
+from time import sleep
 from subprocess import call, check_output, PIPE
 
 
@@ -56,6 +57,7 @@ class LetsNGINX:
                 self.log()
 
                 domain_list = ','.join(domains)
+                error = None
 
                 try:
                     out = check_output([
@@ -70,17 +72,17 @@ class LetsNGINX:
                 except:
                     error = check_output(['tail', '-n1', '/var/log/letsencrypt/letsencrypt.log']).decode().strip()
                     self.log(f'\033[31m{error}\033[m')
-                    from time import sleep
                     sleep(60)
 
-                for line in out.decode().split('\n'):
-                    if line:
-                        self.log('\033[33m' + line  + '\033[m')
+                if not error:
+                    for line in out.decode().split('\n'):
+                        if line:
+                            self.log('\033[33m' + line  + '\033[m')
 
-                        if 'Certificate is saved at: ' in line:
-                            self.link(cert_name, line.split('Certificate is saved at: ')[1].strip())
-                        elif 'Key is saved at: ' in line:
-                            self.link(cert_name, line.split('Key is saved at: ')[1].strip())
+                            if 'Certificate is saved at: ' in line:
+                                self.link(cert_name, line.split('Certificate is saved at: ')[1].strip())
+                            elif 'Key is saved at: ' in line:
+                                self.link(cert_name, line.split('Key is saved at: ')[1].strip())
 
             self.log(f'-' * 60)
     
