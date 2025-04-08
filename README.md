@@ -91,3 +91,11 @@ server {
 }
 ```
 
+
+# Migração v2 para v3
+```
+$ dcx nginx rm -rf /certs
+$ dcx certbot delete
+$ dcr nginx
+```
+
