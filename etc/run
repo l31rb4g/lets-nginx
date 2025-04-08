@@ -188,17 +188,8 @@ class LetsNGINX:
         return out
 
     def renew(self):
-        def execute(cmd):
-            popen = Popen(cmd, stdout=PIPE, universal_newlines=True)
-            for stdout_line in iter(popen.stdout.readline, ""):
-                yield stdout_line 
-            popen.stdout.close()
-            return_code = popen.wait()
-            if return_code:
-                raise CalledProcessError(return_code, cmd)
-
-        for line in execute(['certbot', '--no-random-sleep-on-renew', 'renew']):
-            self.log(f'\033[33m{line.strip()}\033[m')
+        for line in check_output(['certbot', '--no-random-sleep-on-renew', 'renew'], stderr=PIPE):
+            self.log(f'\033[33m{line.decode().strip()}\033[m')
         self.log()
 
         os.remove('/nginx/etc/_renew')
