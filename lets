@@ -1,0 +1,50 @@
+#!/usr/bin/python3
+import sys
+from subprocess import call
+
+
+class LetsManage:
+
+    def __init__(self):
+        print()
+
+        if len(sys.argv) < 2:
+            self._help()
+        else:
+            cmd = sys.argv[1]
+            if cmd == 'create':
+                if len(sys.argv) == 5:
+                    nome = sys.argv[2]
+                    dominio = sys.argv[3]
+                    email = sys.argv[4]
+
+                    self.log(f'Iniciando requisição de certificado\n')
+                    with open('./nginx/etc/_request', 'w') as _f:
+                        _f.write(f'{nome}\n{dominio}\n{email}')
+                else:
+                    self._help()
+
+            elif cmd == 'renew':
+                self.log(f'Iniciando renovação\n')
+                call(['touch', './nginx/etc/_renew'])
+
+            else:
+                self._help()
+
+        call(['docker', 'compose', 'restart', 'nginx'])
+
+    def log(self, msg):
+        TAG = '\033[1m[let\'s nginx]\033[m'
+        print(f'{TAG} {msg}', flush=True)
+
+    def _help(self):
+        msg = 'Utilização:\n'
+        msg += '  - lets create [nome] [dominios] [email]\n'
+        msg += '  - lets renew\n'
+
+        print(msg)
+        sys.exit(1)
+
+if __name__ == '__main__':
+    LetsManage()
+
