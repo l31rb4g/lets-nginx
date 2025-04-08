@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import os
-from subprocess import call, check_output
+from subprocess import call, check_output, PIPE
 
 
 PATH_CERTS = '/nginx_conf/certs'
@@ -15,10 +15,10 @@ class LetsNGINX:
         self.log(f'=' * 60)
         self.log(f'\033[1;37mLet\'s NGINX {self.version}\033[m')
         self.log(f'=' * 60)
+        self.log()
 
         if not os.path.exists(PATH_REGISTRY):
             os.mkdir(PATH_REGISTRY)
-            self.log()
 
         certs = self._list_certs()
         self.log(f'Certificados encontrados: {len(certs)}')
@@ -35,7 +35,7 @@ class LetsNGINX:
             self.log(f'E-mail: {email}')
 
             if os.path.exists(f'{PATH_REGISTRY}/{cert_name}'):
-                self.log('Situação: registrado')
+                self.log('Situação: \033[32mregistrado\033[m')
             else:
                 self.log('Situação: registrando...')
                 call(['cp', f'{PATH_CERTS}/{cert_name}', f'{PATH_REGISTRY}/{cert_name}'])
