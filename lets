@@ -14,9 +14,10 @@ class LetsManage:
             cmd = sys.argv[1]
 
             if cmd == 'info':
-                print('Listando /certs')
+                print('\033[36m/certs\033[m')
                 call(['docker', 'compose', 'exec', 'nginx', 'ls', '-la', '/certs'])
-                print('\nCertbot')
+
+                print('\033[36mCertbot\033[m')
                 call(['docker', 'compose', 'exec', 'nginx', 'certbot', 'certificates'])
 
             elif cmd == 'delete':
