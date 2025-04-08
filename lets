@@ -17,7 +17,8 @@ class LetsManage:
                 call(['docker', 'compose', 'exec', 'nginx', 'certbot', 'delete'])
 
             elif cmd == 'reset':
-                pass
+                call(['docker', 'compose', 'exec', 'nginx', 'rm', '-rf', '/certs'])
+                call(['docker', 'compose', 'exec', 'nginx', 'certbot', 'deleteall'])
 
             elif cmd == 'renew':
                 self.log(f'Iniciando renovação\n')

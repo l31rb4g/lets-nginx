@@ -21,6 +21,11 @@ class LetsNGINX:
         self.log(f'=' * 60)
         self.log()
 
+        if os.path.exists('/nginx/etc/_renew'):
+            self.log('Renovando certificados')
+            self.log('-' * 60)
+            self.renew()
+
         self.processar_certificados()
         self.enable_confs()
         self.run()
@@ -181,6 +186,24 @@ class LetsNGINX:
                     pad = ' ' * (56 - len(cert_status) - len(cert_path))
                     self.log(f'{cert_status} {cert_path} {pad} {cert_date}')
         return out
+
+    def renew(self):
+        print()
+        def execute(cmd):
+            popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True)
+            for stdout_line in iter(popen.stdout.readline, ""):
+                yield stdout_line 
+            popen.stdout.close()
+            return_code = popen.wait()
+            if return_code:
+                raise subprocess.CalledProcessError(return_code, cmd)
+
+        for line in execute(['certbot', '--no-random-sleep-on-renew', 'renew']):
+            print(f'\033[33m{line}\033[m', end='', flush=True)
+        print('', flush=True)
+
+        os.remove('/nginx/etc/_renew')
+
 
 if __name__ == '__main__':
     LetsNGINX()
