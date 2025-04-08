@@ -87,7 +87,7 @@ class LetsNGINX:
         if not os.path.exists(_path):
             os.mkdir(_path)
 
-        _file = re.sub('^(.*)/([^/]+)$', r'\2', t)
+        _file = re.sub('^(.*)/([^/]+)$', r'\2', filename)
         call(['ln', '-s', filename, f'{PATH_CERTS}/{cert_name}/{_file}'])
 
     def _list_certs(self) -> list:
