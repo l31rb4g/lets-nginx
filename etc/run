@@ -53,7 +53,7 @@ class LetsNGINX:
                     '-d', domain_list,
                 ], stderr=PIPE)
 
-                for line in out.decode().split('\r'):
+                for line in out.decode().split('\n'):
                     self.log('\033[33m' + line  + '\033[m')
 
             self.log(f'-' * 60)
