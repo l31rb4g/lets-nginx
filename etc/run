@@ -144,7 +144,7 @@ class LetsNGINX:
 
                 if cfg == 'https':
                     if not self._validate_https(_from):
-                        self.log((f'\033[35mO https vai ficar desativado porque não foi possível localizar '
+                        self.log((f'\033[31mO https vai ficar desativado porque não foi possível localizar '
                                   'todos os certificados.\033[m'))
                         continue
 
