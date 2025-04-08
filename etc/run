@@ -172,7 +172,7 @@ class LetsNGINX:
                         cert_status = '\033[31m[NOT FOUND]\033[m'
                         out = False
 
-                    pad = ' ' * (60 - len(cert_status) - len(cert_path))
+                    pad = ' ' * (50 - len(cert_status) - len(cert_path))
                     self.log(f'{cert_status} {cert_path} {pad} {cert_date}')
         return out
 
