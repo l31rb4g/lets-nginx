@@ -25,7 +25,7 @@ class LetsNGINX:
         self.log('-' * 60)
 
         for cert_name in certs:
-            self.log(f'\033[36m Certificado \033[m {cert_name}')
+            self.log(f'\033[36mCertificado: {cert_name}\033[m')
 
             domains, email = self._read_cert(cert_name)
 
