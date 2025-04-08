@@ -56,15 +56,22 @@ class LetsNGINX:
                 self.log()
 
                 domain_list = ','.join(domains)
-                out = check_output([
-                    'certbot',
-                    'certonly',
-                    '--non-interactive',
-                    '--standalone',
-                    '--agree-tos',
-                    '--email', email,
-                    '-d', domain_list,
-                ], stderr=PIPE)
+
+                try:
+                    out = check_output([
+                        'certbot',
+                        'certonly',
+                        '--non-interactive',
+                        '--standalone',
+                        '--agree-tos',
+                        '--email', email,
+                        '-d', domain_list,
+                    ], stderr=PIPE)
+                except:
+                    error = check_output(['tail', '-n1', '/var/log/letsencrypt/letsencrypt.log']).decode().strip()
+                    self.log(f'\033[31mErro ao gerar certificado: {error}\033[m')
+                    from time import sleep
+                    sleep(60)
 
                 for line in out.decode().split('\n'):
                     if line:
