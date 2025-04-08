@@ -188,8 +188,9 @@ class LetsNGINX:
         return out
 
     def renew(self):
-        for line in check_output(['certbot', '--no-random-sleep-on-renew', 'renew'], stderr=PIPE):
-            self.log(f'\033[33m{line.decode().strip()}\033[m')
+        lines = check_output(['certbot', '--no-random-sleep-on-renew', 'renew'], stderr=PIPE).decode()
+        for line in lines:
+            self.log(f'\033[33m{line.strip()}\033[m')
         self.log()
 
         os.remove('/nginx/etc/_renew')
