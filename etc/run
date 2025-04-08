@@ -146,15 +146,18 @@ class LetsNGINX:
                     cert = re.findall('ssl_([^ ]+) (.*);', line)[0]
                     cert_type = cert[0].strip()
                     cert_path = cert[1].strip()
+                    cert_date = ''
                     color = ''
 
                     if os.path.exists(cert_path):
                         cert_status = '\033[32m[OK]\033[m'
+                        _date = check_output(f'ls -la {cert_path} | awk "{print $6,$7}"', shell=True).decode()
+                        cert_date = f'({_date})'
                     else:
                         cert_status = '\033[31m[NOT FOUND]\033[m'
                         out = False
 
-                    self.log(f'{cert_status} {cert_path}')
+                    self.log(f'{cert_status} {cert_path} {cert_date}')
         return out
 
 if __name__ == '__main__':
