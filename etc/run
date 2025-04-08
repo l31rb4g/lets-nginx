@@ -105,11 +105,16 @@ class LetsNGINX:
 
     def _read_cert(self, cert_name) -> tuple:
         '''returns (domains:list, email:str)'''
-        with open(f'{PATH_CONFIG}/{cert_name}') as _f:
-            _cert = _f.readlines()
+        try:
+            with open(f'{PATH_CONFIG}/{cert_name}') as _f:
+                _cert = _f.readlines()
 
-        domains = [domain.strip() for domain in _cert[0:-2]]
-        email = _cert[-1].strip()
+            domains = [domain.strip() for domain in _cert[0:-2]]
+            email = _cert[-1].strip()
+        except:
+            self.log('Este certificado tem erros de sintaxe e será ignorado.')
+            return None
+
         return (domains, email)
 
     def enable_confs(self):
@@ -131,10 +136,11 @@ class LetsNGINX:
                                   'todos os certificados.\033[m'))
                         continue
 
+                    self.log()
                     self.log(f'\033[7;49;92m ✅ Todos os certificados foram encontrados! \033[m')
                     self.log()
 
-                self.log(f'Copiando {cfg}.conf')
+                self.log(f'Habilitando {cfg}.conf')
                 shutil.copyfile(_from, _to)
 
     def _validate_https(self, filepath) -> bool:
@@ -157,7 +163,8 @@ class LetsNGINX:
                         cert_status = '\033[31m[NOT FOUND]\033[m'
                         out = False
 
-                    self.log(f'{cert_status} {cert_path} {cert_date}')
+                    pad = ' ' * (60 - len(cert_status) - len(cert_path))
+                    self.log(f'{cert_status} {cert_path} {pad} {cert_date}')
         return out
 
 if __name__ == '__main__':
