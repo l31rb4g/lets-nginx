@@ -69,7 +69,7 @@ class LetsNGINX:
                     ], stderr=PIPE)
                 except:
                     error = check_output(['tail', '-n1', '/var/log/letsencrypt/letsencrypt.log']).decode().strip()
-                    self.log(f'\033[31mErro ao gerar certificado: {error}\033[m')
+                    self.log(f'\033[31m{error}\033[m')
                     from time import sleep
                     sleep(60)
 
