@@ -19,7 +19,7 @@ class LetsNGINX:
         self.log(f'=' * 60)
         self.log()
 
-        self.processar_certificados()
+        #self.processar_certificados()
         self.run()
 
     def log(self, msg=''):
