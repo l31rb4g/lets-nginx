@@ -21,7 +21,7 @@ class LetsNGINX:
             os.mkdir(PATH_REGISTRY)
 
         certs = self._list_certs()
-        self.log(f'Certificados encontrados: {len(certs)}')
+        self.log(f'Certificados configurados: {len(certs)}')
         self.log('-' * 60)
 
         for cert_name in certs:
@@ -53,7 +53,7 @@ class LetsNGINX:
                     '-d', domain_list,
                 ], stderr=PIPE)
 
-                for line in out.decode():
+                for line in out.decode().split('\r'):
                     self.log('\033[33m' + line  + '\033[m')
 
             self.log(f'-' * 60)
