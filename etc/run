@@ -118,6 +118,7 @@ class LetsNGINX:
             email = _cert[-1].strip()
         except:
             self.log('Este certificado tem erros de sintaxe e será ignorado.')
+            self.log()
             return None
 
         return (domains, email)
