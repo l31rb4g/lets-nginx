@@ -17,6 +17,11 @@ class LetsManage:
                 call(['docker', 'compose', 'exec', 'nginx', 'tree', '/certs'])
                 call(['docker', 'compose', 'exec', 'nginx', 'certbot', 'certificates'])
 
+            elif cmd == 'renew':
+                self.log(f'Iniciando renovação\n')
+                call(['touch', './nginx/etc/_renew'])
+                call(['docker', 'compose', 'restart', 'nginx'])
+
             elif cmd == 'delete':
                 call(['docker', 'compose', 'exec', 'nginx', 'certbot', 'delete'])
                 print('\nRemova a pasta correspondente em /certs\n')
@@ -32,11 +37,6 @@ class LetsManage:
                     call(['docker', 'compose', 'exec', 'nginx',
                           'certbot', 'delete', '--non-interactive', '--cert-name', cert_name])
 
-            elif cmd == 'renew':
-                self.log(f'Iniciando renovação\n')
-                call(['touch', './nginx/etc/_renew'])
-                call(['docker', 'compose', 'restart', 'nginx'])
-
             else:
                 self._help()
 
@@ -45,9 +45,11 @@ class LetsManage:
         print(f'{TAG} {msg}', flush=True)
 
     def _help(self):
-        msg = 'Utilização:\n'
-        msg += '  - lets create [nome] [dominios] [email]\n'
-        msg += '  - lets renew\n'
+        msg = 'Comandos disponíveis:\n'
+        msg += '  - info\n'
+        msg += '  - renew\n'
+        #msg += '  - delete\n'
+        msg += '  - reset\n'
 
         print(msg)
         sys.exit(1)
