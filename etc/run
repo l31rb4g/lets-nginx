@@ -13,7 +13,7 @@ class LetsNGINX:
     def __init__(self):
         self.log('\n' * 10)
         self.log(f'=' * 60)
-        self.log(f'\033[1;37Let\'s NGINX {self.version}\033[m')
+        self.log(f'\033[1;37mLet\'s NGINX {self.version}\033[m')
         self.log(f'=' * 60)
 
         if not os.path.exists(PATH_REGISTRY):
@@ -25,7 +25,7 @@ class LetsNGINX:
         self.log('-' * 60)
 
         for cert_name in certs:
-            self.log(f'\033[47m Certificado \033[m {cert_name}')
+            self.log(f'\033[36m Certificado \033[m {cert_name}')
 
             domains, email = self._read_cert(cert_name)
 
