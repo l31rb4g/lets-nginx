@@ -35,7 +35,7 @@ class LetsNGINX:
             self.log(f'E-mail: {email}')
 
             if os.path.exists(f'{PATH_REGISTRY}/{cert_name}'):
-                self.log('Situação: \033[32m✅ registrado\033[m')
+                self.log('Situação: \033[32mregistrado\033[m')
             else:
                 self.log('Situação: registrando...')
                 call(['cp', f'{PATH_CERTS}/{cert_name}', f'{PATH_REGISTRY}/{cert_name}'])
@@ -51,7 +51,7 @@ class LetsNGINX:
                     '-d', domain_list,
                 ], stderr=PIPE)
 
-                print('\033[33m\n' + out.decode() + '\033[m')
+                self.log('\n\033[33m' + out.decode() + '\033[m')
 
             self.log(f'-' * 60)
 
