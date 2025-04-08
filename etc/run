@@ -188,7 +188,7 @@ class LetsNGINX:
         return out
 
     def renew(self):
-        lines = check_output(['certbot', '--no-random-sleep-on-renew', 'renew'], stderr=PIPE).decode()
+        lines = check_output(['certbot', '--no-random-sleep-on-renew', 'renew'], stderr=PIPE).decode().split('\n')
         for line in lines:
             self.log(f'\033[33m{line.strip()}\033[m')
         self.log()
