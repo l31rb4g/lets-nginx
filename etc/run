@@ -6,8 +6,9 @@ from time import sleep
 from subprocess import call, check_output, PIPE, Popen, CalledProcessError
 
 
-PATH_CERTS = '/certs'
-PATH_CONFIG = '/lets/certs'
+PATH_REGISTRY = '/certs'
+PATH_CERTS = '/lets/certs'
+PATH_CONF = '/lets/conf'
 
 
 class LetsNGINX:
@@ -61,7 +62,7 @@ class LetsNGINX:
                 self.log(f'          {domain}')
             self.log(f'E-mail: {email}')
 
-            if os.path.exists(f'{PATH_CERTS}/{cert_name}'):
+            if os.path.exists(f'{PATH_REGISTRY}/{cert_name}'):
                 self.log('Situação: \033[32mregistrado\033[m')
 
             else:
@@ -98,25 +99,25 @@ class LetsNGINX:
             self.log(f'-' * 60)
     
     def link(self, cert_name:str, filename:str):
-        if not os.path.exists(PATH_CERTS):
-            os.mkdir(PATH_CERTS)
+        if not os.path.exists(PATH_REGISTRY):
+            os.mkdir(PATH_REGISTRY)
 
-        _path = f'{PATH_CERTS}/{cert_name}'
+        _path = f'{PATH_REGISTRY}/{cert_name}'
         if not os.path.exists(_path):
             os.mkdir(_path)
 
         _file = re.sub('^(.*)/([^/]+)$', r'\2', filename)
-        call(['ln', '-s', filename, f'{PATH_CERTS}/{cert_name}/{_file}'])
+        call(['ln', '-s', filename, f'{PATH_REGISTRY}/{cert_name}/{_file}'])
 
     def _list_certs(self) -> list:
-        if not os.path.exists(PATH_CONFIG):
+        if not os.path.exists(PATH_CERTS):
             return []
-        return os.listdir(PATH_CONFIG)
+        return os.listdir(PATH_CERTS)
 
     def _read_cert(self, cert_name) -> tuple:
         '''returns (domains:list, email:str)'''
         try:
-            with open(f'{PATH_CONFIG}/{cert_name}') as _f:
+            with open(f'{PATH_CERTS}/{cert_name}') as _f:
                 _cert = _f.readlines()
 
             domains = [domain.strip() for domain in _cert[0:-2]]
@@ -137,7 +138,7 @@ class LetsNGINX:
             self.log('-' * 60)
             self.log(f'\033[36m{cfg}\033[m')
 
-            _from = f'/lets/{cfg}.conf'
+            _from = f'{PATH_CONF}/{cfg}.conf'
             _to = f'/etc/nginx/http.d/{cfg}.conf'
 
             if os.path.exists(_to):
