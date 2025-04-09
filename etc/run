@@ -2,6 +2,7 @@
 import os
 import re
 import shutil
+import datetime
 from time import sleep
 from subprocess import call, check_output, PIPE, Popen, CalledProcessError
 
@@ -35,8 +36,9 @@ class LetsNGINX:
         print(f'{self.tag} {msg}', flush=True)
 
     def run(self):
+        hora = datetime.datetime.now().strftime('%H:%M')
         self.log()
-        self.log('Iniciando o NGINX')
+        self.log(f'Iniciando o NGINX' + (' ' * 40) + '{hora}')
         self.log('-' * 60)
         call(['nginx', '-g' 'daemon off;'])
 
