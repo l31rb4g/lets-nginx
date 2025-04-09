@@ -7,7 +7,7 @@ from subprocess import call, check_output, PIPE, Popen, CalledProcessError
 
 
 PATH_CERTS = '/certs'
-PATH_CONFIG = '/nginx_conf/certs'
+PATH_CONFIG = '/lets/certs'
 
 
 class LetsNGINX:
@@ -137,7 +137,7 @@ class LetsNGINX:
             self.log('-' * 60)
             self.log(f'\033[36m{cfg}\033[m')
 
-            _from = f'/nginx_conf/{cfg}.conf'
+            _from = f'/lets/{cfg}.conf'
             _to = f'/etc/nginx/http.d/{cfg}.conf'
 
             if os.path.exists(_to):
