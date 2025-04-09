@@ -1,0 +1,59 @@
+#!/usr/bin/python3
+import sys
+from subprocess import call, check_output, PIPE
+
+
+class LetsManage:
+
+    def __init__(self):
+        print()
+
+        if len(sys.argv) < 2:
+            self._help()
+        else:
+            cmd = sys.argv[1]
+
+            if cmd == 'info':
+                call(['docker', 'compose', 'exec', 'nginx', 'tree', '/certs'])
+                call(['docker', 'compose', 'exec', 'nginx', 'certbot', 'certificates'])
+
+            elif cmd == 'renew':
+                self.log(f'Iniciando renovação\n')
+                call(['touch', './nginx/etc/_renew'])
+                call(['docker', 'compose', 'restart', 'nginx'])
+
+            elif cmd == 'delete':
+                call(['docker', 'compose', 'exec', 'nginx', 'certbot', 'delete'])
+                print('\nRemova a pasta correspondente em /certs\n')
+
+            elif cmd == 'reset':
+                print('>>> Excluindo /certs')
+                call(['docker', 'compose', 'exec', 'nginx', 'rm', '-rf', '/certs'])
+                certs = check_output('docker compose exec nginx certbot certificates | grep \'Certificate Name:\'',
+                                     shell=True, stderr=PIPE).decode().strip().split('\n')
+                for cert in certs:
+                    cert_name = cert.split(': ')[1].strip()
+                    print('\n>>> Excluindo ' + cert_name)
+                    call(['docker', 'compose', 'exec', 'nginx',
+                          'certbot', 'delete', '--non-interactive', '--cert-name', cert_name])
+
+            else:
+                self._help()
+
+    def log(self, msg):
+        TAG = '\033[1m[let\'s nginx]\033[m'
+        print(f'{TAG} {msg}', flush=True)
+
+    def _help(self):
+        msg = 'Comandos disponíveis:\n'
+        msg += '  - info\n'
+        msg += '  - renew\n'
+        #msg += '  - delete\n'
+        msg += '  - reset\n'
+
+        print(msg)
+        sys.exit(1)
+
+if __name__ == '__main__':
+    LetsManage()
+

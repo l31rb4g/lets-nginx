@@ -7,8 +7,10 @@ Let's NGINX é um container docker (compose) que roda um NGINX capaz de gerar ce
 ## Estrutura de arquivos
 ```
 /
+| lets/                 - diretório de configuração
+      | certs/          - diretório com as configurações de certificado
+      | conf/           - diretório com as configurações do NGINX
 | nginx/                - esse repositório clonado como submódulo
-| nginx_conf/           - pasta com os configs do NGINX
 | docker-compose.yml    - yaml do docker compose
 ```
 
@@ -22,7 +24,7 @@ git submodule add https://github.com/l31rb4g/lets-nginx.git nginx
 
 
 ## Configuração do NGINX
-Crie uma pasta chamada `nginx_conf` na raiz do projeto (veja nginx_conf.exemplo). Essa pasta deve ter 2 arquivos:
+Crie um diretório chamada `lets` na raiz do projeto. Esse diretório deve ter 2 arquivos:
   - default.conf
 
     Esse arquivo deve conter apenas configurações para plain http. Esse arquivo sempre é carregado pelo NGINX.
@@ -41,26 +43,19 @@ nginx:
     build:
         context: ./nginx
     volumes:
+        - ./lets:/lets
         - ./nginx:/nginx
         - ./nginx/etc/letsencrypt:/etc/letsencrypt
-        - ./nginx_conf:/nginx_conf
 ```
 
 
-## Como gerar um certificado
-Utilize o script `lets` da seguinte maneira:
+## Exemplo de arquivo de certificado
 ```
-  - lets create [nome] [dominios] [email]
-  - lets renew
-```
+example.com
+sub.example.com
 
-Exemplo:
+user@example.com
 ```
-./nginx/lets create default example.com admin@example.com
-./nginx/lets renew
-```
-
-Quando você rodar esse comando, o certbot tentará gerar o certificado para o domínio informado. Se o certificado for gerado com sucesso, o NGINX carregará o arquivo `https.conf`. Ao final do processo o NGINX reiniciará sozinho.
 
 
 ## Exemplo de arquivo default.conf
@@ -82,8 +77,8 @@ server {
     listen       443 ssl;
     server_name  default;
 
-    ssl_certificate     /certs/default/fullchain.pem;
-    ssl_certificate_key /certs/default/privkey.pem;
+    ssl_certificate     /certs/example/fullchain.pem;
+    ssl_certificate_key /certs/example/privkey.pem;
 
     location / {
         proxy_pass http://app:8000;

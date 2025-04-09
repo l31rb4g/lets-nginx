@@ -1,66 +1,173 @@
 #!/usr/bin/python3
 import os
 import re
-import sys
 import shutil
 import datetime
-import traceback
-import subprocess
 from time import sleep
-from subprocess import call, check_output, PIPE
+from subprocess import call, check_output, PIPE, Popen, CalledProcessError
+
+
+PATH_REGISTRY = '/certs'
+PATH_CERTS = '/lets/certs'
+PATH_CONF = '/lets/conf'
 
 
 class LetsNGINX:
+    version = '3.0'
+    tag = '\033[1m[let\'s nginx]\033[m'
+
     def __init__(self):
-        print('\n\n')
-        self.log('\033[1;32mLet\'s NGINX!\033[m {}'.format(datetime.datetime.now()))
+        hora = datetime.datetime.now().strftime('%H:%M')
 
-        if os.path.exists('/nginx/etc/_request'):
-            self.log('Nova requisição encontrada\n')
-            self._generate()
-        elif os.path.exists('/nginx/etc/_renew'):
+        self.log('\n' * 10)
+        self.log(f'=' * 60)
+        self.log(f'\033[1;37mLet\'s NGINX {self.version}\033[m' +  (' ' * 40) + f'{hora}')
+        self.log(f'=' * 60)
+        self.log()
+
+        if os.path.exists('/nginx/etc/_renew'):
             self.log('Renovando certificados')
-            self._renew()
+            self.log('-' * 60)
+            self.renew()
 
-        self._link_certs()
+        self.processar_certificados()
+        self.enable_confs()
+        self.run()
+
+    def log(self, msg=''):
+        print(f'{self.tag} {msg}', flush=True)
+
+    def run(self):
+        self.log()
+        self.log('Iniciando o NGINX')
+        self.log('-' * 60)
+        call(['nginx', '-g' 'daemon off;'])
+
+    def processar_certificados(self):
+        '''Lê a configuração e emite os certificados pelo certbot, se necessário'''
+
+        certs = self._list_certs()
+        self.log(f'Certificados configurados: {len(certs)}')
+        self.log('-' * 60)
+
+        for cert_name in certs:
+            self.log(f'\033[36m{cert_name}\033[m')
+
+            _cert = self._read_cert(cert_name)
+
+            if not _cert:
+                continue
+
+            domains, email = _cert
+
+            self.log(f'Domínios: ' + domains[0])
+            for domain in domains[1:]:
+                self.log(f'          {domain}')
+            self.log(f'E-mail: {email}')
+
+            if os.path.exists(f'{PATH_REGISTRY}/{cert_name}'):
+                self.log('Situação: \033[32mregistrado\033[m')
+
+            else:
+                self.log('Situação: \033[33mregistrando...\033[m')
+                self.log()
+
+                domain_list = ','.join(domains)
+                error = None
+
+                try:
+                    out = check_output([
+                        'certbot',
+                        'certonly',
+                        '--non-interactive',
+                        '--standalone',
+                        '--agree-tos',
+                        '--email', email,
+                        '-d', domain_list,
+                    ], stderr=PIPE)
+                except:
+                    error = check_output(['tail', '-n1', '/var/log/letsencrypt/letsencrypt.log']).decode().strip()
+                    self.log(f'\033[31m{error}\033[m')
+
+                if not error:
+                    for line in out.decode().split('\n'):
+                        if line:
+                            self.log('\033[33m' + line  + '\033[m')
+
+                            if 'Certificate is saved at: ' in line:
+                                self.link(cert_name, line.split('Certificate is saved at: ')[1].strip())
+                            elif 'Key is saved at: ' in line:
+                                self.link(cert_name, line.split('Key is saved at: ')[1].strip())
+
+            self.log(f'-' * 60)
+    
+    def link(self, cert_name:str, filename:str):
+        if not os.path.exists(PATH_REGISTRY):
+            os.mkdir(PATH_REGISTRY)
+
+        _path = f'{PATH_REGISTRY}/{cert_name}'
+        if not os.path.exists(_path):
+            os.mkdir(_path)
+
+        _file = re.sub('^(.*)/([^/]+)$', r'\2', filename)
+        call(['ln', '-s', filename, f'{PATH_REGISTRY}/{cert_name}/{_file}'])
+
+    def _list_certs(self) -> list:
+        if not os.path.exists(PATH_CERTS):
+            return []
+        return os.listdir(PATH_CERTS)
+
+    def _read_cert(self, cert_name) -> tuple:
+        '''returns (domains:list, email:str)'''
+        try:
+            with open(f'{PATH_CERTS}/{cert_name}') as _f:
+                _cert = _f.readlines()
+
+            domains = [domain.strip() for domain in _cert[0:-2]]
+            email = _cert[-1].strip()
+        except:
+            self.log('Este certificado tem erros de sintaxe e será ignorado.')
+            self.log()
+            return None
+
+        return (domains, email)
+
+    def enable_confs(self):
+        self.log()
+        self.log('Validando configuração')
+        enabled = []
 
         for cfg in ['default', 'https']:
-            _from = f'/nginx_conf/{cfg}.conf'
+            self.log('-' * 60)
+            self.log(f'\033[36m{cfg}\033[m')
+
+            _from = f'{PATH_CONF}/{cfg}.conf'
             _to = f'/etc/nginx/http.d/{cfg}.conf'
 
             if os.path.exists(_to):
                 os.remove(_to)
 
             if os.path.exists(_from):
+                if cfg == 'default':
+                    self.log('\033[32mConfiguração habilitada.\033[m')
+
                 if cfg == 'https':
                     if not self._validate_https(_from):
-                        self.log((f'\033[35mO https vai ficar desativado porque não foi possível localizar '
-                                  'todos os certificados.\033[m'))
+                        self.log(f'\033[31mO https vai ficar desativado porque não foi possível\033[m')
+                        self.log(f'\033[31mlocalizar todos os certificados.\033[m')
                         continue
 
                     self.log(f'\033[7;49;92m ✅ Todos os certificados foram encontrados! \033[m')
+                    self.log('-' * 60)
 
-                self.log(f'Copiando {cfg}.conf')
+                enabled.append(f'{cfg}.conf')
                 shutil.copyfile(_from, _to)
 
-        self.run()
-
-        self.log('fallback')
-        while True:
-            sleep(3600)
-
-    def run(self):
-        self.log('Iniciando o NGINX')
-        call(['nginx', '-g' 'daemon off;'])
-
-    def log(self, msg):
-        TAG = '\033[1m[let\'s nginx]\033[m'
-        print(f'{TAG} {msg}', flush=True)
+            if not os.path.exists(_from):
+                self.log('\033[31mNão encontrado.\033[m')
 
     def _validate_https(self, filepath) -> bool:
-        self.log('Validando https')
         out = True
-
         with open(filepath) as _f:
             for _line in _f.readlines():
                 line = _line.strip()
@@ -68,90 +175,29 @@ class LetsNGINX:
                     cert = re.findall('ssl_([^ ]+) (.*);', line)[0]
                     cert_type = cert[0].strip()
                     cert_path = cert[1].strip()
+                    cert_date = ''
                     color = ''
 
                     if os.path.exists(cert_path):
                         cert_status = '\033[32m[OK]\033[m'
+                        _date = check_output('ls -la ' + cert_path + ' | awk \'{print $6,$7}\'', shell=True)
+                        cert_date = '(' + _date.decode().strip() + ')'
                     else:
                         cert_status = '\033[31m[NOT FOUND]\033[m'
                         out = False
 
-                    self.log(f'{cert_status} {cert_path}')
+                    pad = ' ' * (56 - len(cert_status) - len(cert_path))
+                    self.log(f'{cert_status} {cert_path} {pad} {cert_date}')
         return out
 
-    def _generate(self):
-        with open('/nginx/etc/_request') as _f:
-            info = _f.readlines()
-            try:
-                out = check_output(f'''certbot \
-                    certonly \
-                    --non-interactive \
-                    --standalone \
-                    --agree-tos \
-                    --email {info[2]} \
-                    -d {info[1]} \
-                    -d *.{info[1]} \
-                ''', shell=True, stderr=PIPE).decode().strip().split('\n')
-
-                for line in out:
-                    print(f'\033[33m{line}\033[m', flush=True)
-                print('', flush=True)
-
-            except Exception as ex:
-                nome = info[0].strip()
-                call(['tail', '/var/log/letsencrypt/letsencrypt.log'])
-                self.log(f'\033[31mCertificado não gerado: {nome}\033[m')
-
-            dominio = info[1].strip().split(',')[0]
-            _name = f'/etc/letsencrypt/archive/{dominio}'
-            if os.path.exists(_name):
-                with open(f'{_name}/.name', 'w') as _f:
-                    _f.write(info[0].strip())
-
-            os.remove('/nginx/etc/_request')
-
-    def _renew(self):
-        print()
-        def execute(cmd):
-            popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True)
-            for stdout_line in iter(popen.stdout.readline, ""):
-                yield stdout_line 
-            popen.stdout.close()
-            return_code = popen.wait()
-            if return_code:
-                #raise subprocess.CalledProcessError(return_code, cmd)
-                yield '[ERRO] Não foi possível renovar o certificado'
-
-        for line in execute(['certbot', '--no-random-sleep-on-renew', 'renew']):
-            print(f'\033[33m{line}\033[m', end='', flush=True)
-        print('', flush=True)
-
+    def renew(self):
+        lines = check_output(['certbot', '--no-random-sleep-on-renew', 'renew'], stderr=PIPE).decode().split('\n')
+        for line in lines:
+            if line.strip():
+                self.log(f'\033[33m{line.strip()}\033[m')
+        self.log()
         os.remove('/nginx/etc/_renew')
 
-    def _link_certs(self):
-        self.log('Linkando certificados')
-        archive = '/etc/letsencrypt/archive'
-        live = '/etc/letsencrypt/live'
-
-        if os.path.exists('/certs'):
-            shutil.rmtree('/certs')
-        os.mkdir('/certs')
-
-        if os.path.exists(archive):
-            certs = check_output(['find', archive, '-type', 'd']).decode().split('\n')
-            for cert in certs:
-                if cert and cert != archive:
-                    with open(f'{cert}/.name') as _f:
-                       nome = _f.read().strip()
-
-                    dominio = cert.replace(f'{archive}/', '')
-
-                    if os.path.exists(f'/certs/{nome}'):
-                        call(['rm', '-rf', f'/certs/{nome}'])
-
-                    call(['ln', '-s', f'{live}/{dominio}', f'/certs/{nome}'])
-                    self.log(f'  /certs/{nome}')
 
 if __name__ == '__main__':
     LetsNGINX()
-
