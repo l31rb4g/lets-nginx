@@ -38,7 +38,7 @@ class LetsNGINX:
     def run(self):
         hora = datetime.datetime.now().strftime('%H:%M')
         self.log()
-        self.log(f'Iniciando o NGINX' + (' ' * 40) + '{hora}')
+        self.log('Iniciando o NGINX' + (' ' * 40) + f'{hora}')
         self.log('-' * 60)
         call(['nginx', '-g' 'daemon off;'])
 
