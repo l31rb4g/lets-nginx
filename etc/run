@@ -161,8 +161,7 @@ class LetsNGINX:
                 shutil.copyfile(_from, _to)
 
             if not os.path.exists(_from):
-                if cfg == 'default':
-                    self.log('\033[31mNão encontrado.\033[m')
+                self.log('\033[31mNão encontrado.\033[m')
 
     def _validate_https(self, filepath) -> bool:
         out = True
