@@ -17,9 +17,11 @@ class LetsNGINX:
     tag = '\033[1m[let\'s nginx]\033[m'
 
     def __init__(self):
+        hora = datetime.datetime.now().strftime('%H:%M')
+
         self.log('\n' * 10)
         self.log(f'=' * 60)
-        self.log(f'\033[1;37mLet\'s NGINX {self.version}\033[m')
+        self.log(f'\033[1;37mLet\'s NGINX {self.version}\033[m' +  (' ' * 40) + f'{hora}')
         self.log(f'=' * 60)
         self.log()
 
@@ -36,9 +38,8 @@ class LetsNGINX:
         print(f'{self.tag} {msg}', flush=True)
 
     def run(self):
-        hora = datetime.datetime.now().strftime('%H:%M')
         self.log()
-        self.log('Iniciando o NGINX' + (' ' * 37) + f'{hora}')
+        self.log('Iniciando o NGINX')
         self.log('-' * 60)
         call(['nginx', '-g' 'daemon off;'])
 
