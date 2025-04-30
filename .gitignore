@@ -1,3 +1,4 @@
 
-etc/_request
+etc/_renew
+etc/registry/*
 etc/letsencrypt/*
