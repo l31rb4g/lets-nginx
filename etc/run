@@ -30,7 +30,12 @@ class LetsNGINX:
             self.log('-' * 60)
             self.renew()
 
-        self.processar_certificados()
+        request = os.environ.get('LETS_REQUEST', '0') == '1'
+        if request:
+            self.processar_certificados()
+        else:
+            self.log('Requisição de certificados desabilitada pela LETS_REQUEST')
+
         self.enable_confs()
         self.run()
 
