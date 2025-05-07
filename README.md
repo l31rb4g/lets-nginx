@@ -45,6 +45,7 @@ nginx:
     volumes:
         - ./lets:/lets
         - ./nginx:/nginx
+        - ./nginx/etc/registry:/certs
         - ./nginx/etc/letsencrypt:/etc/letsencrypt
 ```
 
