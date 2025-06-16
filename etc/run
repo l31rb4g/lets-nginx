@@ -1,15 +1,16 @@
 #!/usr/bin/python3
 import os
 import re
-import shutil
 import datetime
 from time import sleep
-from subprocess import call, check_output, PIPE, Popen, CalledProcessError
+from subprocess import call, check_output, PIPE
 
 
-PATH_REGISTRY = '/certs'
-PATH_CERTS = '/lets/certs'
 PATH_CONF = '/lets/conf'
+PATH_CERTS_BASE = '/lets/certs'
+PATH_CERTS_ENV = '/lets/certs/local'
+PATH_REGISTRY_BASE = '/certs'
+PATH_REGISTRY_ENV = '/certs/local'
 
 
 class LetsNGINX:
@@ -18,6 +19,9 @@ class LetsNGINX:
 
     def __init__(self):
         hora = datetime.datetime.now().strftime('%H:%M')
+        _env = os.environ.get('LETS_ENV', 'local')
+        PATH_CERTS_ENV = f'{PATH_CERTS_BASE}/{_env}'
+        PATH_REGISTRY_ENV = f'{PATH_REGISTRY_BASE}/{_env}'
 
         self.log('\n' * 10)
         self.log(f'=' * 60)
@@ -70,7 +74,7 @@ class LetsNGINX:
                 self.log(f'          {domain}')
             self.log(f'E-mail: {email}')
 
-            if os.path.exists(f'{PATH_REGISTRY}/{cert_name}'):
+            if os.path.exists(f'{PATH_REGISTRY_ENV}/{cert_name}'):
                 self.log('Situação: \033[32mregistrado\033[m')
 
             else:
@@ -107,25 +111,28 @@ class LetsNGINX:
             self.log(f'-' * 60)
     
     def link(self, cert_name:str, filename:str):
-        if not os.path.exists(PATH_REGISTRY):
-            os.mkdir(PATH_REGISTRY)
+        if not os.path.exists(PATH_REGISTRY_BASE):
+            os.mkdir(PATH_REGISTRY_BASE)
 
-        _path = f'{PATH_REGISTRY}/{cert_name}'
+        if not os.path.exists(PATH_REGISTRY_ENV):
+            os.mkdir(PATH_REGISTRY_ENV)
+
+        _path = f'{PATH_REGISTRY_ENV}/{cert_name}'
         if not os.path.exists(_path):
             os.mkdir(_path)
 
         _file = re.sub('^(.*)/([^/]+)$', r'\2', filename)
-        call(['ln', '-s', filename, f'{PATH_REGISTRY}/{cert_name}/{_file}'])
+        call(['ln', '-s', filename, f'{PATH_REGISTRY_ENV}/{cert_name}/{_file}'])
 
     def _list_certs(self) -> list:
-        if not os.path.exists(PATH_CERTS):
+        if not os.path.exists(PATH_CERTS_ENV):
             return []
-        return os.listdir(PATH_CERTS)
+        return os.listdir(PATH_CERTS_ENV)
 
     def _read_cert(self, cert_name) -> tuple:
         '''returns (domains:list, email:str)'''
         try:
-            with open(f'{PATH_CERTS}/{cert_name}') as _f:
+            with open(f'{PATH_CERTS_ENV}/{cert_name}') as _f:
                 _cert = _f.readlines()
 
             domains = [domain.strip() for domain in _cert[0:-2]]
@@ -166,7 +173,8 @@ class LetsNGINX:
                     self.log('-' * 60)
 
                 enabled.append(f'{cfg}.conf')
-                shutil.copyfile(_from, _to)
+
+                self.copy_cfg(_from, _to)
 
             if not os.path.exists(_from):
                 self.log('\033[31mNão encontrado.\033[m')
@@ -175,7 +183,7 @@ class LetsNGINX:
         out = True
         with open(filepath) as _f:
             for _line in _f.readlines():
-                line = _line.strip()
+                line = self._render(_line.strip())
                 if line and re.match('ssl_certificate', line):
                     cert = re.findall('ssl_([^ ]+) (.*);', line)[0]
                     cert_type = cert[0].strip()
@@ -195,6 +203,16 @@ class LetsNGINX:
                     self.log(f'{cert_status} {cert_path} {pad} {cert_date}')
         return out
 
+    def _render(self, content:str) -> str:
+        return content.replace('{{ certs }}', PATH_REGISTRY_ENV)
+
+    def copy_cfg(self, _from,  _to):
+        with open(_from) as _f:
+            content = self.render(_f.read())
+        if content:
+            with open(_to, 'w') as _t:
+                _t.write(content)
+
     def renew(self):
         lines = check_output(['certbot', '--no-random-sleep-on-renew', 'renew'], stderr=PIPE).decode().split('\n')
         for line in lines:
@@ -206,3 +224,4 @@ class LetsNGINX:
 
 if __name__ == '__main__':
     LetsNGINX()
+

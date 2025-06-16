@@ -8,8 +8,10 @@ Let's NGINX é um container docker (compose) que roda um NGINX capaz de gerar ce
 ```
 /
 | lets/                 - diretório de configuração
-      | certs/          - diretório com as configurações de certificado
       | conf/           - diretório com as configurações do NGINX
+      | certs/          - diretório base dos certificados
+            | stage/    - diretório com certificados do ambiente stage
+            | prod/     - diretório com certificados do ambiente prod
 | nginx/                - esse repositório clonado como submódulo
 | docker-compose.yml    - yaml do docker compose
 ```
@@ -33,6 +35,11 @@ Crie um diretório chamada `lets` na raiz do projeto. Esse diretório deve ter 2
   - https.conf
 
     Esse arquivo deve conter todas as configurações de https. Esse arquivo só será carregado se todos os certificados já tiverem sido gerados. Se os certificados não forem encontrados, o NGINX não carregará o https.conf e servirá apenas plain http (default.conf).
+
+
+## Variáveis
+- LETS_REQUEST - habilita a requisição de certificados no let's encrypt
+- LETS_ENV - especifica o ambiente (subpasta da certs/)
 
 
 ## docker-compose.yml
@@ -78,8 +85,8 @@ server {
     listen       443 ssl;
     server_name  default;
 
-    ssl_certificate     /certs/example/fullchain.pem;
-    ssl_certificate_key /certs/example/privkey.pem;
+    ssl_certificate     {{ certs }}/example/fullchain.pem;
+    ssl_certificate_key {{ certs }}/example/privkey.pem;
 
     location / {
         proxy_pass http://app:8000;
