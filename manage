@@ -4,11 +4,9 @@ import sys
 from subprocess import call, check_output, PIPE
 
 
-PATH_REGISTRY_BASE = '/certs'
-PATH_REGISTRY_ENV = '/certs/env'
-
-
 class LetsManage:
+    PATH_REGISTRY_BASE = '/certs'
+    PATH_REGISTRY_ENV = '/certs/local'
 
     def __init__(self):
         print()
@@ -16,11 +14,11 @@ class LetsManage:
         if len(sys.argv) < 2:
             self._help()
         else:
-            PATH_REGISTRY_ENV = '/certs/' + os.environ.get('LETS_ENV', 'env')
+            self.PATH_REGISTRY_ENV = '/certs/' + os.environ.get('LETS_ENV', 'local')
             cmd = sys.argv[1]
 
             if cmd == 'info':
-                call(['docker', 'compose', 'exec', 'nginx', 'tree', PATH_REGISTRY_BASE])
+                call(['docker', 'compose', 'exec', 'nginx', 'tree', self.PATH_REGISTRY_BASE])
                 call(['docker', 'compose', 'exec', 'nginx', 'certbot', 'certificates'])
 
             elif cmd == 'renew':
@@ -30,11 +28,11 @@ class LetsManage:
 
             elif cmd == 'delete':
                 call(['docker', 'compose', 'exec', 'nginx', 'certbot', 'delete'])
-                print(f'\nRemova a pasta correspondente em {PATH_REGISTRY_BASE}\n')
+                print(f'\nRemova a pasta correspondente em {self.PATH_REGISTRY_BASE}\n')
 
             elif cmd == 'reset':
-                print(f'>>> Excluindo {PATH_REGISTRY_BASE}')
-                call(['docker', 'compose', 'exec', 'nginx', 'rm', '-rf', PATH_REGISTRY_BASE])
+                print(f'>>> Excluindo {self.PATH_REGISTRY_ENV}')
+                call(['docker', 'compose', 'exec', 'nginx', 'rm', '-rf', self.PATH_REGISTRY_ENV])
                 certs = check_output('docker compose exec nginx certbot certificates | grep \'Certificate Name:\'',
                                      shell=True, stderr=PIPE).decode().strip().split('\n')
                 for cert in certs:
