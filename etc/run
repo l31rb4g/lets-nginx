@@ -208,7 +208,7 @@ class LetsNGINX:
 
     def copy_cfg(self, _from,  _to):
         with open(_from) as _f:
-            content = self.render(_f.read())
+            content = self._render(_f.read())
         if content:
             with open(_to, 'w') as _t:
                 _t.write(content)
