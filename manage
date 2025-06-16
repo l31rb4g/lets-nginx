@@ -19,7 +19,7 @@ class LetsManage:
             cmd = sys.argv[1]
 
             if cmd == 'info':
-                call(['docker', 'compose', 'exec', 'nginx', 'tree', PATH_REGISTRY])
+                call(['docker', 'compose', 'exec', 'nginx', 'tree', PATH_REGISTRY_BASE])
                 call(['docker', 'compose', 'exec', 'nginx', 'certbot', 'certificates'])
 
             elif cmd == 'renew':
@@ -29,11 +29,11 @@ class LetsManage:
 
             elif cmd == 'delete':
                 call(['docker', 'compose', 'exec', 'nginx', 'certbot', 'delete'])
-                print(f'\nRemova a pasta correspondente em {PATH_REGISTRY}\n')
+                print(f'\nRemova a pasta correspondente em {PATH_REGISTRY_BASE}\n')
 
             elif cmd == 'reset':
-                print(f'>>> Excluindo {PATH_REGISTRY}')
-                call(['docker', 'compose', 'exec', 'nginx', 'rm', '-rf', PATH_REGISTRY])
+                print(f'>>> Excluindo {PATH_REGISTRY_BASE}')
+                call(['docker', 'compose', 'exec', 'nginx', 'rm', '-rf', PATH_REGISTRY_BASE])
                 certs = check_output('docker compose exec nginx certbot certificates | grep \'Certificate Name:\'',
                                      shell=True, stderr=PIPE).decode().strip().split('\n')
                 for cert in certs:
