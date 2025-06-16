@@ -19,13 +19,14 @@ class LetsNGINX:
     def __init__(self):
         hora = datetime.datetime.now().strftime('%H:%M')
         _env = os.environ.get('LETS_ENV', 'local')
+        _request = os.environ.get('LETS_REQUEST', '0')
         self.PATH_CERTS_ENV = f'{self.PATH_CERTS_BASE}/{_env}'
         self.PATH_REGISTRY_ENV = f'{self.PATH_REGISTRY_BASE}/{_env}'
 
         self.log('\n' * 10)
         self.log(f'=' * 60)
         self.log(f'\033[1;37mLet\'s NGINX {self.version}\033[m' +  (' ' * 40) + f'{hora}')
-        self.log(f'REQUEST: ' + os.environ.get('LETS_REQUEST') + '  |  ENV: ' + os.environ.get('LETS_ENV'))
+        self.log(f'REQUEST: {_request}  |  ENV: {_env}')
         self.log(f'=' * 60)
         self.log()
 
