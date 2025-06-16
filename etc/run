@@ -8,9 +8,9 @@ from subprocess import call, check_output, PIPE
 
 PATH_CONF = '/lets/conf'
 PATH_CERTS_BASE = '/lets/certs'
-PATH_CERTS_ENV = '/lets/certs/local'
+#PATH_CERTS_ENV = '/lets/certs/local'
 PATH_REGISTRY_BASE = '/certs'
-PATH_REGISTRY_ENV = '/certs/local'
+#PATH_REGISTRY_ENV = '/certs/local'
 
 
 class LetsNGINX:
