@@ -26,6 +26,7 @@ class LetsNGINX:
         self.log('\n' * 10)
         self.log(f'=' * 60)
         self.log(f'\033[1;37mLet\'s NGINX {self.version}\033[m' +  (' ' * 40) + f'{hora}')
+        self.log(f'REQUEST: ' + os.environ.get('LETS_REQUEST') + '  |  ENV: ' + os.environ.get('LETS_ENV'))
         self.log(f'=' * 60)
         self.log()
 
@@ -183,11 +184,11 @@ class LetsNGINX:
         out = True
         with open(filepath) as _f:
             for _line in _f.readlines():
-                line = self._render(_line.strip())
+                line = _line.strip()
                 if line and re.match('ssl_certificate', line):
                     cert = re.findall('ssl_([^ ]+) (.*);', line)[0]
                     cert_type = cert[0].strip()
-                    cert_path = cert[1].strip()
+                    cert_path = self._render(cert[1].strip())
                     cert_date = ''
                     color = ''
 
