@@ -41,6 +41,19 @@ class LetsManage:
                     call(['docker', 'compose', 'exec', 'nginx',
                           'certbot', 'delete', '--non-interactive', '--cert-name', cert_name])
 
+            elif cmd == 'logs':
+                print(check_output(['docker', 'compose', 'exec', 'nginx',
+                                    'ls', '-l', '/var/log/nginx']).decode())
+                access = check_output(['docker', 'compose', 'exec', 'nginx',
+                                    'tail', '-n6', '/var/log/nginx/access.log']).decode()
+                error = check_output(['docker', 'compose', 'exec', 'nginx',
+                                    'tail', '-n10', '/var/log/nginx/error.log']).decode()
+
+                print('== ACCESS ==========')
+                print(access)
+                print('== ERROR ==========')
+                print(error)
+
             else:
                 self._help()
 
