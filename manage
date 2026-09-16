@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 import os
 import sys
-from subprocess import call, check_output, PIPE
+from subprocess import call, check_output, PIPE, check_output
 
 
 class LetsManage:
@@ -31,8 +31,18 @@ class LetsManage:
                 print(f'\nRemova a pasta correspondente em {self.PATH_REGISTRY_BASE}\n')
 
             elif cmd == 'reset':
-                print(f'>>> Excluindo {self.PATH_REGISTRY_ENV}')
-                call(['docker', 'compose', 'exec', 'nginx', 'rm', '-rf', self.PATH_REGISTRY_ENV])
+                _path = check_output([
+                    'docker', 'compose', 'exec', '-T', 'nginx',
+                    'sh', '-c', 'printf %s "$LETS_ENV"',
+                    ], text=True)
+
+                if not _path:
+                    print('LETS_ENV não configurado')
+                    return
+
+                print(f'>>> Excluindo /certs/{_path}')
+                call(['docker', 'compose', 'exec', 'nginx', 'rm', '-rf', f'/certs/{_path}'])
+
                 certs = check_output('docker compose exec nginx certbot certificates | grep \'Certificate Name:\'',
                                      shell=True, stderr=PIPE).decode().strip().split('\n')
                 for cert in certs:
