@@ -3,7 +3,7 @@ import os
 import re
 import datetime
 from time import sleep
-from subprocess import call, check_output, PIPE
+from subprocess import call, check_output, PIPE, STDOUT, CalledProcessError
 
 
 class LetsNGINX:
@@ -215,12 +215,32 @@ class LetsNGINX:
                 _t.write(content)
 
     def renew(self):
-        lines = check_output(['certbot', '--no-random-sleep-on-renew', 'renew'], stderr=PIPE).decode().split('\n')
-        for line in lines:
+        try:
+            out = check_output(
+                ['certbot', '--no-random-sleep-on-renew', 'renew'],
+                stderr=STDOUT,
+            )
+        except CalledProcessError as e:
+            self.log('\033[31mFalha ao renovar os certificados\033[m')
+            self.log('-' * 60)
+            for line in (e.output or b'').decode(errors='replace').split('\n'):
+                if line.strip():
+                    self.log(f'\033[31m{line.strip()}\033[m')
+            self.log('-' * 60)
+            self.log()
+            return False
+        except OSError as e:
+            self.log('\033[31mNão foi possível executar o certbot\033[m')
+            self.log(f'\033[31m{e}\033[m')
+            self.log()
+            return False
+
+        for line in out.decode(errors='replace').split('\n'):
             if line.strip():
                 self.log(f'\033[33m{line.strip()}\033[m')
         self.log()
         os.remove('/nginx/etc/_renew')
+        return True
 
 
 if __name__ == '__main__':
